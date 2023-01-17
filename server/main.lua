@@ -1,0 +1,4 @@
+-- Outline:
+    -- Save persisting death/status data if configured
+    -- Networked Revival
+    -- Try to fix invisible dead players upon arrival as seen in other scripts
