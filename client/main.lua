@@ -1,5 +1,11 @@
-local playerState = LocalPlayer.state
-playerState:set('health', GetEntityHealth(cache.ped))
+playerState = LocalPlayer.state
+PlayerIsLoaded = true
+PlayerIsDead = false
+PlayerCanRespawn = false
+CurrentHealth = 0
+PreviousHealth = CurrentHealth
+
+GetEntityHealth(cache.ped)
 -- Outline:
 
 -- Damange event handler
@@ -81,6 +87,7 @@ local damageTypes = {
     [133987706] = "Car",
     [-1553120962] = "Car",
 }
+
 -- local damages = { Melee, Knife, Bullet, Animal, FallDamage, Explosion, Gas, Burn, Drown, Car }
 -- local damageNames = { 'Melee', 'Knife', 'Bullet', 'Animal', 'FallDamage', 'Explosion', 'Gas', 'Burn', 'Drown', 'Car' }
 -- for i = 1, #damages do
@@ -89,6 +96,12 @@ local damageTypes = {
 --         print(('[%s] = "%s",'):format(damages[i][k], damageNames[i]))
 --     end
 -- end
+
+Citizen.CreateThread(function()
+    PreviousHealth = CurrentHealth
+    CurrentHealth = GetEntityHealth(cache.ped)
+    Wait(200)
+end)
 
 AddEventHandler('gameEventTriggered', function(event, data)
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
@@ -104,10 +117,14 @@ AddEventHandler('gameEventTriggered', function(event, data)
         print('knockout +1')
         -- look at using ox_core settings
     end
-    print('Damage taken:', playerState.health - GetEntityHealth(cache.ped))
-    if playerState.health - GetEntityHealth(cache.ped) >= 25 then
+
+    CurrentHealth = GetEntityHealth(cache.ped)
+    print(CurrentHealth, PreviousHealth)
+    print('Health:', GetEntityHealth(cache.ped), 'Damage taken:', PreviousHealth - CurrentHealth)
+    if PreviousHealth - CurrentHealth >= 25 then
         print('took 25 damage or greater')
     end
-    playerState:set('health', GetEntityHealth(cache.ped))
 
+    PreviousHealth = CurrentHealth
+    CurrentHealth = GetEntityHealth(cache.ped)
 end)
