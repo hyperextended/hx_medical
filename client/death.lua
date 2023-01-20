@@ -1,21 +1,13 @@
 -- Outline:
-
-local playerState = LocalPlayer.state
 local respawnTimer = 10
-local canRespawn
+local canRespawn = false
 
-local anims = {
-    { 'missfinale_c1@', 'lying_dead_player0' },
-    { 'veh@low@front_ps@idle_duck', 'sit' },
-    { 'dead', 'dead_a' },
-}
-
-Citizen.CreateThread(function()
-    while true do
-        Wait(200)
-        print(GetGameplayCamRelativePitch())
-    end
-end)
+-- Citizen.CreateThread(function()
+--     while true do
+--         Wait(1000)
+--         print(playerState.dead)
+--     end
+-- end)
 
 -- Trigger event for player death
 --     option to persist death
@@ -26,37 +18,30 @@ end)
 --     Hold E display and counter
 --     teleport to hospital - possibly vacant bed
 --     config to optionally wipe inventory
-
 local function revive(full)
-    -- SetEntityMaxHealth(cache.ped, 200)
+    SetPedMaxHealth(cache.ped, 200)
     if not PlayerIsDead then
-        -- TriggerServerEvent('ox:playerDeath', false)
-        SetEntityHealth(cache.ped, 100)
+        TriggerServerEvent('ox:playerDeath', false)
         ClearPedBloodDamage(cache.ped)
         if cache.vehicle then
             SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
         end
         ClearPedTasks(cache.ped)
         EnableAllControlActions(0)
-        SetEntityInvincible(cache.ped, false)
         SetEveryoneIgnorePlayer(cache.playerId, false)
         CurrentHealth = 200
         PreviousHealth = 200
-        canRespawn = false
-        print('revive:', playerState.dead)
+        SetEntityInvincible(cache.ped, false)
         SetEntityHealth(cache.ped, 200)
+        canRespawn = false
     end
 end
 
 local function death()
     Citizen.CreateThread(function()
-        print('starting thread')
-
         -- main loop
-        -- TriggerServerEvent('ox:playerDeath', true)
-
         while PlayerIsDead do
-
+            SetEntityInvincible(cache.ped, true)
             for i = 1, #anims do
                 lib.requestAnimDict(anims[i][1])
             end
@@ -69,7 +54,6 @@ local function death()
             PreviousHealth = 100
             local coords = GetEntityCoords(cache.ped) --[[@as vector]]
             NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, GetEntityHeading(cache.ped), false, false)
-            SetEntityInvincible(cache.ped, true)
             SetEntityHealth(cache.ped, 100)
             respawnTimer = 10
 
@@ -78,9 +62,8 @@ local function death()
             end
             -- main loop
             Wait(200)
-            -- print('running main loop')
             local anim = cache.vehicle and anims[2] or anims[1]
-
+            SetEntityInvincible(cache.ped, true)
             -- sub loop
             while PlayerIsDead do
 
@@ -146,7 +129,13 @@ end
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
+    print(playerState.dead)
     startDeathLoop()
+end)
+
+AddEventHandler('ox:playerLogout', function()
+    PlayerIsLoaded = false
+    PlayerIsDead = false
 end)
 
 AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
@@ -168,6 +157,7 @@ RegisterCommand('kill', function()
     print('state:', playerState.dead)
 end)
 
+
 RegisterCommand('revive', function()
     playerState:set('dead', false)
     print('state:', playerState.dead)
@@ -177,4 +167,3 @@ RegisterCommand('status', function()
     local statuses = lib.callback.await('ox:getStatus', 0, source)
     print(json.encode(statuses, { indent = true }))
 end)
-startDeathLoop()

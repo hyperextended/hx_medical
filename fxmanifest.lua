@@ -25,6 +25,8 @@ client_scripts {
     'client/main.lua',
     'client/death.lua',
     'client/wounding.lua',
+    'client/statuses/unconscious.lua',
+    'client/statuses/limping.lua',
 }
 
 server_scripts {

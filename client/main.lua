@@ -4,8 +4,25 @@ PlayerIsDead = false
 PlayerCanRespawn = false
 CurrentHealth = 0
 PreviousHealth = CurrentHealth
+anims = {
+    { 'missfinale_c1@', 'lying_dead_player0' },
+    { 'veh@low@front_ps@idle_duck', 'sit' },
+    { 'dead', 'dead_a' },
+}
+
 
 GetEntityHealth(cache.ped)
+AddEventHandler('ox:playerLoaded', function(data)
+    GetPedMaxHealth(cache.ped)
+    GetEntityMaxHealth(cache.ped)
+    PlayerIsLoaded = true
+    SetPedMaxHealth(cache.ped, 200)
+    SetEntityMaxHealth(cache.ped, 200)
+    CurrentHealth = GetEntityHealth(cache.ped)
+end)
+
+SetEntityMaxHealth(cache.ped, 200)
+CurrentHealth = GetEntityHealth(cache.ped)
 -- Outline:
 
 -- Damange event handler
@@ -98,31 +115,45 @@ local damageTypes = {
 -- end
 
 Citizen.CreateThread(function()
-    PreviousHealth = CurrentHealth
-    CurrentHealth = GetEntityHealth(cache.ped)
-    Wait(200)
+    while true do
+        PreviousHealth = CurrentHealth
+        CurrentHealth = GetEntityHealth(cache.ped)
+        Wait(200)
+        if CurrentHealth < 126 then
+            SetEntityHealth(cache.ped, 150)
+        end
+    end
 end)
 
 AddEventHandler('gameEventTriggered', function(event, data)
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
     if event ~= "CEventNetworkEntityDamage" then return end
     if victim ~= cache.ped then return end
+    CurrentHealth = GetEntityHealth(cache.ped)
     -- print(json.encode(data, { indent = true }))
+    local damageTaken = PreviousHealth - CurrentHealth
     if IsPedDeadOrDying(cache.ped) then
+        if damageTypes[weapon] == "Car" or damageTypes[weapon] == 'FallDamage' or damageTypes[weapon] == 'Melee' then
+            playerState:set('dead', false)
+        end
         print(('Killed by %s.'):format(damageTypes[weapon]))
+        return
     else
         print(('Damaged by %s.'):format(damageTypes[weapon]))
     end
     if damageTypes[weapon] == "Car" or damageTypes[weapon] == 'FallDamage' or damageTypes[weapon] == 'Melee' then
-        print('knockout +1')
-        -- look at using ox_core settings
+        print('blunted', damageTaken)
+        if damageTaken >= 12 then
+            print('knockout')
+            TriggerServerEvent('medical:changeStatus', 'unconscious', 10, set)
+        end
     end
 
-    CurrentHealth = GetEntityHealth(cache.ped)
+
     print(CurrentHealth, PreviousHealth)
     print('Health:', GetEntityHealth(cache.ped), 'Damage taken:', PreviousHealth - CurrentHealth)
     if PreviousHealth - CurrentHealth >= 25 then
-        print('took 25 damage or greater')
+        print('took 25 damage or greater to', GetPedLastDamageBone(cache.ped))
     end
 
     PreviousHealth = CurrentHealth
