@@ -8,6 +8,8 @@
 --     player.setStatus('limping', 100)
 -- end)
 
+
+-- TODO: REPLACE UNSECURE EVENT WITH SERVER-SIDE LOGIC
 RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     print(status, value, changeType)
     local player = Ox.GetPlayer(source)
@@ -24,9 +26,9 @@ end)
 
 AddEventHandler('ox:playerLoaded', function(source, userid, charid)
     local player = Ox.GetPlayer(source)
-    print(json.encode(player))
+    -- print(json.encode(player))
     local isDead = player.get('isDead')
     print('isDead', isDead)
-    local playerState = player.getState()
-    playerState:set('dead', true, true)
+    -- local playerState = player.getState()
+    -- playerState:set('dead', isDead, true)
 end)

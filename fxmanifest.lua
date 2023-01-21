@@ -22,6 +22,7 @@ shared_scripts {
 
 client_scripts {
     '@ox_core/imports/client.lua',
+    'data/weapons.lua',
     'client/main.lua',
     'client/death.lua',
     'client/wounding.lua',

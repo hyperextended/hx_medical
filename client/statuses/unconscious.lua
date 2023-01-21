@@ -5,7 +5,6 @@ PlayerIsUnconscious = false
 local function knockout()
     -- lock user in animation'
     local expression = exports.scully_emotemenu:GetCurrentExpression()
-
     Citizen.CreateThread(function()
         DisableAllControlActions(0)
         exports.scully_emotemenu:SetExpression('dead_1')
@@ -13,7 +12,14 @@ local function knockout()
             lib.requestAnimDict(anims[i][1])
         end
         local anim = cache.vehicle and anims[2] or anims[1]
-        while PlayerIsUnconscious == true do
+        if IsPedRagdoll(cache.ped) then
+            local coords = GetEntityCoords(cache.ped)
+            -- SetPedCanRagdoll(cache.ped, false)
+            ClearPedTasksImmediately(cache.ped)
+            -- SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z)
+        end
+        while not PlayerIsDead and PlayerIsUnconscious do
+            print('not PlayerIsDead and PlayerIsUnconscious')
             anim = cache.vehicle and anims[2] or anims[1]
             if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
                 TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
@@ -22,22 +28,20 @@ local function knockout()
         end
     end)
     local timer = 10
-    -- Countdown timer
+    Wait(500)
+    print('starting progress circle')
     if lib.progressCircle({
         duration = timer * 1000,
         label = 'unconscious',
+        useWhileDead = true,
         allowRagDoll = true,
         allowCuffed = true,
         allowFalling = true,
         canCancel = false,
-        disable = {
-            move = true,
-            car = true,
-            combat = true
-        }
     })
     then
-        print('setting uncon false')
+        SetPedCanRagdoll(cache.ped, true)
+        SetEntityInvincible(cache.ped, false)
         PlayerIsUnconscious = false
         EnableAllControlActions(0)
         ClearPedTasks(cache.ped)
@@ -48,15 +52,18 @@ local function knockout()
 end
 
 AddEventHandler('ox:statusTick', function(statuses)
-    if PlayerIsDead then return end
+    if PlayerIsDead or not statuses.unconscious then return end
+    -- print(statuses.unconscious, PlayerIsUnconscious, PlayerIsDead)
     if not PlayerIsUnconscious then
-        if statuses.unconscious > 90 then
+        if statuses.unconscious > 50 then
             PlayerIsUnconscious = true
             knockout()
         end
     end
 end)
 
-RegisterCommand('unconscious', function(source, args, rawCommand)
-    TriggerServerEvent('medical:changeStatus', 'unconscious', tonumber(args[1]))
-end)
+if GetConvar('medical:debug', 'false') == 'true' then
+    RegisterCommand('unconscious', function(source, args, rawCommand)
+        TriggerServerEvent('medical:changeStatus', 'unconscious', tonumber(args[1]))
+    end)
+end

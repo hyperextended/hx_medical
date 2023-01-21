@@ -3,7 +3,6 @@ local intensity = 100
 local prevWalk = 'default'
 
 local function canTrip(ped)
-    -- ineligible movement for tripping
     if IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return false
     elseif IsPedWalking(ped) or IsPedRunning(ped) or IsPedSprinting(ped) then return true else return false end
 end
@@ -26,7 +25,7 @@ local function limping(amount)
         print(canTrip(ped), chance)
         if IsPedSprinting(ped) then chance = chance + 10 end
         if canTrip(ped) and chance > 95 then
-            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.05)
+            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.1)
             SetPedToRagdollWithFall(ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         end
         Wait(1000)
@@ -36,7 +35,7 @@ local function limping(amount)
 end
 
 AddEventHandler('ox:statusTick', function(statuses)
-    if PlayerIsDead then return end
+    if PlayerIsDead or not statuses.limping then return end
     if not PlayerIsLimping then
         if statuses.limping > 50 then
             intensity = statuses.limping
@@ -44,16 +43,15 @@ AddEventHandler('ox:statusTick', function(statuses)
         elseif statuses.limping == 0 and PlayerIsLimping then
             intensity = 0
             PlayerIsLimping = false
-            print('legs feel better')
         end
     else
         intensity = statuses.limping
     end
 end)
 
-
-RegisterCommand('limping', function(source, args, rawCommand)
-    local amount = args[1]
-    TriggerServerEvent('medical:changeStatus', 'limping', tonumber(args[1]))
-    limping(amount)
-end)
+if GetConvar('medical:debug', 'false') == 'true' then
+    RegisterCommand('limping', function(source, args, rawCommand)
+        TriggerServerEvent('medical:changeStatus', 'limping', tonumber(args[1]))
+        limping(args[1])
+    end)
+end
