@@ -9,6 +9,13 @@ local canRespawn = false
 --     end
 -- end)
 
+Citizen.CreateThread(function()
+    while true do
+        Wait(0)
+        SetPedSuffersCriticalHits(cache.ped, false)
+    end
+end)
+
 local function revive(full)
     SetPedMaxHealth(cache.ped, 200)
     if not PlayerIsDead then
@@ -32,7 +39,7 @@ end
 local function death()
     Citizen.CreateThread(function()
         PlayerIsUnconscious = false
-        PlayerIsLimping = false
+        PlayerIsStaggered = false
         TriggerServerEvent('ox:playerDeath', true)
         SetEntityInvincible(cache.ped, true)
         for i = 1, #anims do
@@ -137,7 +144,7 @@ AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, 
     end
 end)
 
-if GetConvar('medical:debug', 'false') == 'true' then
+if GetConvarInt('medical:debug', 0) == 1 then
 
     RegisterCommand('kill', function()
         print(respawnTimer)
@@ -154,5 +161,5 @@ if GetConvar('medical:debug', 'false') == 'true' then
         local statuses = lib.callback.await('ox:getStatus', 0, source)
         print(json.encode(statuses, { indent = true }))
     end)
-
+    startDeathLoop()
 end

@@ -1,16 +1,16 @@
-PlayerIsLimping = false
+PlayerIsStaggered = false
 local intensity = 100
 local prevWalk = 'default'
 
 local function canTrip(ped)
-    if IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return false
-    elseif IsPedWalking(ped) or IsPedRunning(ped) or IsPedSprinting(ped) then return true else return false end
+    if IsPedWalking(ped) or IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return false
+    elseif IsPedRunning(ped) or IsPedSprinting(ped) then return true else return false end
 end
 
-local function limping(amount)
+local function stagger(amount)
     prevWalk = exports.scully_emotemenu:GetCurrentWalk()
-    PlayerIsLimping = true
-    while PlayerIsLimping and (intensity > 0) do
+    PlayerIsStaggered = true
+    while PlayerIsStaggered and (intensity > 0) do
         local ped = cache.ped
         local curWalk = exports.scully_emotemenu:GetCurrentWalk()
         local chance = math.random(100)
@@ -35,23 +35,28 @@ local function limping(amount)
 end
 
 AddEventHandler('ox:statusTick', function(statuses)
-    if PlayerIsDead or not statuses.limping then return end
-    if not PlayerIsLimping then
-        if statuses.limping > 50 then
-            intensity = statuses.limping
-            limping(intensity)
-        elseif statuses.limping == 0 and PlayerIsLimping then
+    if PlayerIsDead or not statuses.stagger then return end
+    if not PlayerIsStaggered then
+        if statuses.stagger > 50 then
+            intensity = statuses.stagger
+            lib.notify({
+                title = 'Medical',
+                description = 'You are staggered!',
+                type = 'error'
+            })
+            stagger(intensity)
+        elseif statuses.stagger == 0 and PlayerIsStaggered then
             intensity = 0
-            PlayerIsLimping = false
+            PlayerIsStaggered = false
         end
     else
-        intensity = statuses.limping
+        intensity = statuses.stagger
     end
 end)
 
 if GetConvar('medical:debug', 'false') == 'true' then
-    RegisterCommand('limping', function(source, args, rawCommand)
+    RegisterCommand('stagger', function(source, args, rawCommand)
         TriggerServerEvent('medical:changeStatus', 'limping', tonumber(args[1]))
-        limping(args[1])
+        stagger(args[1])
     end)
 end

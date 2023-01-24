@@ -57,6 +57,11 @@ AddEventHandler('ox:statusTick', function(statuses)
     if not PlayerIsUnconscious then
         if statuses.unconscious > 50 then
             PlayerIsUnconscious = true
+            lib.notify({
+                title = 'Medical',
+                description = 'You are unconscious!',
+                type = 'error'
+            })
             knockout()
         end
     end

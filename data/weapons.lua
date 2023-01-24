@@ -15,60 +15,20 @@ Data.WeaponClasses = { -- Define gta weapon classe numbers
     ['WILDLIFE'] = 12,
     ['NOTHING'] = 13
 }
-Data.KnockOutWeapons = {
-    [`WEAPON_FALL`] = true,
-    [`WEAPON_RAMMED_BY_CAR`] = true,
-    [`WEAPON_RUN_OVER_BY_CAR`] = true,
+
+Data.ArmoredBones = {
+    ['SPINE'] = true,
+    ['UPPER_BODY'] = true,
+    ['LOWER_BODY'] = true
 }
 
-Data.MinorInjurWeapons = { -- Define which weapons cause small injuries
-    [Data.WeaponClasses['SMALL_CALIBER']] = true,
-    [Data.WeaponClasses['MEDIUM_CALIBER']] = true,
-    [Data.WeaponClasses['CUTTING']] = true,
-    [Data.WeaponClasses['WILDLIFE']] = true,
-    [Data.WeaponClasses['OTHER']] = true,
-    [Data.WeaponClasses['LIGHT_IMPACT']] = true,
-}
-
-Data.MajorInjurWeapons = { -- Define which weapons cause large injuries
-    [Data.WeaponClasses['HIGH_CALIBER']] = true,
-    [Data.WeaponClasses['HEAVY_IMPACT']] = true,
-    [Data.WeaponClasses['SHOTGUN']] = true,
-    [Data.WeaponClasses['EXPLOSIVE']] = true,
-}
-
-Data.AlwaysBleedChanceWeapons = { -- Define which weapons will always cause bleedign
-    [Data.WeaponClasses['SMALL_CALIBER']] = true,
-    [Data.WeaponClasses['MEDIUM_CALIBER']] = true,
-    [Data.WeaponClasses['CUTTING']] = true,
-    [Data.WeaponClasses['WILDLIFE']] = false,
-}
-
-Data.ForceInjuryWeapons = { -- Define which weapons will always cause injuries
-    [Data.WeaponClasses['HIGH_CALIBER']] = true,
-    [Data.WeaponClasses['HEAVY_IMPACT']] = true,
-    [Data.WeaponClasses['EXPLOSIVE']] = true,
-}
-
-Data.CriticalAreas = { -- Define body areas that will always cause bleeding if wearing armor or not
-    ['UPPER_BODY'] = { armored = false },
-    ['LOWER_BODY'] = { armored = true },
-    ['SPINE'] = { armored = true },
-}
-
----@class StaggerArea Defined body areas that will always cause staggering if wearing armor or not
----@field armored boolean
----@field major number
----@field minor number
 Data.StaggerAreas = {
-    ['SPINE'] = { armored = true, major = 60, minor = 30 },
-    ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
-    ['LLEG'] = { armored = true, major = 100, minor = 85 },
-    ['RLEG'] = { armored = true, major = 100, minor = 85 },
-    ['LFOOT'] = { armored = true, major = 100, minor = 100 },
-    ['RFOOT'] = { armored = true, major = 100, minor = 100 },
+    'SPINE',
+    'LLEG',
+    'RLEG',
+    'LFOOT',
+    'RFOOT',
 }
-
 
 Data.Bones = { -- Correspond bone hash numbers to their label
     [0]     = 'NONE',
@@ -130,7 +90,6 @@ Data.Bones = { -- Correspond bone hash numbers to their label
 }
 
 ---@alias Bone 'NONE'|'HEAD'|'NECK'|'SPINE'|'UPPER_BODY'|'LOWER_BODY'|'LARM'|'LHAND'|'LFINGER'|'LLEG'|'LFOOT'|'RARM'|'RHAND'|'RFINGER'|'RLEG'|'RFOOT'
-
 Data.BoneIndexes = { -- Correspond bone labels to their hash number
     ['NONE'] = 0,
     -- ['HEAD'] = 31085,
@@ -190,15 +149,6 @@ Data.BoneIndexes = { -- Correspond bone labels to their hash number
     ['RFOOT'] = 52301,
 }
 
-Data.StaggerAreas = {
-    ['SPINE'] = { armored = true, major = 60, minor = 30 },
-    ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
-    ['LLEG'] = { armored = true, major = 100, minor = 85 },
-    ['RLEG'] = { armored = true, major = 100, minor = 85 },
-    ['LFOOT'] = { armored = true, major = 100, minor = 100 },
-    ['RFOOT'] = { armored = true, major = 100, minor = 100 },
-}
-
 Data.WeaponsTable = {
     [-1768145561] = {
         type = "Assault Rifle",
@@ -214,6 +164,7 @@ Data.WeaponsTable = {
     },
     [-1955384325] = {
         label = "Bleeding",
+        bleeding = 1,
         type = "Miscellaneous",
         name = "weapon_bleeding"
     },
@@ -243,14 +194,20 @@ Data.WeaponsTable = {
     [-842959696] = {
         type = "Miscellaneous",
         label = "Fall",
-        class = 'OTHER',
-        name = "weapon_fall"
+        class = 'HEAVY_IMPACT',
+        name = "weapon_fall",
+        statuses = {
+            unconscious = 3
+        }
     },
     [-1553120962] = {
         type = "Miscellaneous",
         label = "Run Over - Vehicle",
         class = 'HEAVY_IMPACT',
-        name = "weapon_run_over_by_car"
+        name = "weapon_run_over_by_car",
+        statuses = {
+            unconscious = 1
+        }
     },
     [-2067956739] = {
         type = "Melee",
@@ -273,7 +230,10 @@ Data.WeaponsTable = {
         type = "Pistol",
         label = "Pistol",
         class = 'SMALL_CALIBER',
-        name = "weapon_pistol"
+        name = "weapon_pistol",
+        statuses = {
+            stagger = 1
+        }
     },
     [-1716589765] = {
         type = "Pistol",
@@ -452,11 +412,13 @@ Data.WeaponsTable = {
     [-1951375401] = {
         label = "Flashlight",
         type = "Melee",
-        name = "weapon_flashlight"
+        name = "weapon_flashlight",
+        class = "HEAVY_IMPACT"
     },
     [-72657034] = {
         label = "Parachute",
         type = "Miscellaneous",
+        class = 'LIGHT_IMPACT',
         name = "gadget_parachute"
     },
     [1119849093] = {
@@ -468,7 +430,8 @@ Data.WeaponsTable = {
     [-2000187721] = {
         label = "Briefcase",
         type = "Melee",
-        name = "weapon_briefcase"
+        name = "weapon_briefcase",
+        class = "HEAVY_IMPACT"
     },
     [-2066285827] = {
         type = "Assault Rifle",
@@ -570,7 +533,7 @@ Data.WeaponsTable = {
     [1223143800] = {
         type = "Miscellaneous",
         label = "Barbed Wire",
-        class = 'WILDLIFE',
+        class = 'CUTTING',
         name = "weapon_barbed_wire"
     },
     [-37975472] = {
