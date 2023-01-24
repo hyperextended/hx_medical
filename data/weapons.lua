@@ -164,9 +164,11 @@ Data.WeaponsTable = {
     },
     [-1955384325] = {
         label = "Bleeding",
-        bleeding = 1,
         type = "Miscellaneous",
-        name = "weapon_bleeding"
+        name = "weapon_bleeding",
+        statuses = {
+            bleeding = 1
+        }
     },
     [-1075685676] = {
         type = "Pistol",
