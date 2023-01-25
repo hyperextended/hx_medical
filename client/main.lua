@@ -108,7 +108,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
     CurrentHealth = GetEntityHealth(cache.ped)
 end)
 
-if GetConvar('medical:debug', 'false') == 'true' then
+if GetConvarInt('medical:debug', 0) == 1 then
 
     RegisterCommand('gh', function(source, args, rawCommand)
         local name = joaat(tostring(args[1]))
