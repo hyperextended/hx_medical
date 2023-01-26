@@ -122,7 +122,7 @@ end
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
-    print('isDead:', playerState.dead)
+    --print('isDead:', playerState.dead)
     startDeathLoop()
 end)
 
@@ -132,9 +132,6 @@ AddEventHandler('ox:playerLogout', function()
 end)
 
 AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
-    -- if not replicated then return end
-    -- print('entity:', bagName:gsub('entity:', ''))
-    -- print('death triggered')
     if value == true then
         PlayerIsDead = true
         death()
@@ -145,6 +142,14 @@ AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, 
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
+
+    local ShowStatus = false
+
+    AddEventHandler('ox:statusTick', function(statuses)
+        if ShowStatus then
+            print(json.encode(statuses, {indent = true}))
+        end
+    end)
 
     RegisterCommand('kill', function()
         print(respawnTimer)
@@ -158,8 +163,6 @@ if GetConvarInt('medical:debug', 0) == 1 then
     end)
 
     RegisterCommand('status', function()
-        local statuses = lib.callback.await('ox:getStatus', 0, source)
-        print(json.encode(statuses, { indent = true }))
+        ShowStatus = not ShowStatus
     end)
-    startDeathLoop()
 end
