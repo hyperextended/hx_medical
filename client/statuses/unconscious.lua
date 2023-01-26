@@ -19,7 +19,6 @@ local function knockout()
             -- SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z)
         end
         while not PlayerIsDead and PlayerIsUnconscious do
-            print('not PlayerIsDead and PlayerIsUnconscious')
             anim = cache.vehicle and anims[2] or anims[1]
             if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
                 TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
@@ -29,7 +28,6 @@ local function knockout()
     end)
     local timer = 10
     Wait(500)
-    print('starting progress circle')
     if lib.progressCircle({
         duration = timer * 1000,
         label = 'unconscious',
@@ -53,7 +51,6 @@ end
 
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.unconscious then return end
-    -- print(statuses.unconscious, PlayerIsUnconscious, PlayerIsDead)
     if not PlayerIsUnconscious then
         if statuses.unconscious > 50 then
             PlayerIsUnconscious = true
