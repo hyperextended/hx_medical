@@ -17,8 +17,8 @@ local function revive()
         end
         EnableAllControlActions(0)
         SetEveryoneIgnorePlayer(cache.playerId, false)
-        CurrentHealth = 200
-        PreviousHealth = 200
+--[[         CurrentHealth = 200
+        PreviousHealth = 200 ]]
         SetEntityInvincible(cache.ped, false)
         SetEntityHealth(cache.ped, 200)
         canRespawn = false
@@ -28,17 +28,18 @@ end
 local function initializeVariables()
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
-    CurrentHealth = 100
-    PreviousHealth = 100
+--[[     CurrentHealth = 100
+    PreviousHealth = 100 ]]
     RespawnTimer = 10
 end
 
 local function triggerServerEvents()
     TriggerServerEvent('ox:playerDeath', true)
     TriggerServerEvent('medical:changeStatus', 'bleed', 0)
+    TriggerServerEvent('medical:changeStatus', 'stagger', 0)
     TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
 end
-local function loadAnimations()
+function LoadAnimations()
     for i = 1, #anims do
         lib.requestAnimDict(anims[i][1])
     end
@@ -125,7 +126,7 @@ local function death()
         initializeVariables()
         SetEntityInvincible(cache.ped, true)
         triggerServerEvents()
-        loadAnimations()
+        LoadAnimations()
         waitForRagdoll()
         respawnPlayer()
 

@@ -28,6 +28,7 @@ Data.StaggerAreas = {
     'RLEG',
     'LFOOT',
     'RFOOT',
+    'NONE',
 }
 
 Data.Bones = { -- Correspond bone hash numbers to their label
@@ -321,7 +322,11 @@ Data.WeaponsTable = {
         type = "Miscellaneous",
         label = "Rammed - Vehicle",
         class = 'HEAVY_IMPACT',
-        name = "weapon_rammed_by_car"
+        name = "weapon_rammed_by_car",
+        statuses = {
+            unconscious = 1,
+            stagger = 1,
+        }
     },
     [-1813897027] = {
         type = "Throwable",

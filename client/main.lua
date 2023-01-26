@@ -1,16 +1,35 @@
 playerState = LocalPlayer.state
-PlayerIsLoaded = true
+PlayerIsLoaded = false
 PlayerIsDead = false
 PlayerCanRespawn = false
-CauseOfDeath = nil
-CurrentHealth = 0
-PreviousHealth = CurrentHealth
+--CauseOfDeath = nil
+
+local function SyncHealth()
+    CurrentHealth = GetEntityHealth(cache.ped)
+    print('Current: ', CurrentHealth, 'Prev: ', PreviousHealth)
+    if CurrentHealth ~= PreviousHealth then
+        PreviousHealth = CurrentHealth
+    end
+    print('Current: ', CurrentHealth, 'Prev: ', PreviousHealth)
+end
+
+local function DamageTaken()
+    return PreviousHealth - GetEntityHealth(cache.ped)
+end
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
     SetPedMaxHealth(cache.ped, 200)
     SetEntityMaxHealth(cache.ped, 200)
-    CurrentHealth = GetEntityHealth(cache.ped)
+    SyncHealth()
+end)
+
+-- Support resource restart
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName == cache.resource and cache.ped then
+        PlayerIsLoaded = true
+        SyncHealth()
+    end
 end)
 
 ---@param status string
@@ -60,11 +79,11 @@ local function handleDamage(weapon, bone, damageTaken)
 
     local weaponData = Data.WeaponsTable[weapon]
     local boneName = Data.Bones[bone]
-    local weaponData = Data.WeaponsTable[weapon]
     local isArmored = checkArmor(cache.ped, boneName)
     if not weaponData.statuses then return else
         local statuses = weaponData.statuses
         for k, v in pairs(statuses) do
+            print("Multi:",v,"DamageTaken",damageTaken,"isArmored", isArmored, "bone: ", boneName, "status", k)
             Data.ApplyStatus[k](v, damageTaken, isArmored, boneName)
         end
     end
@@ -74,14 +93,11 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
     if victim ~= cache.ped then return end
-    CurrentHealth = GetEntityHealth(cache.ped)
-    local damageTaken = PreviousHealth - CurrentHealth
+    local damageTaken = DamageTaken()
+    SyncHealth()
     local hit, bone = GetPedLastDamageBone(cache.ped)
     local armored = GetPedArmour(cache.ped)
     handleDamage(weapon, bone, damageTaken)
-
-    PreviousHealth = CurrentHealth
-    CurrentHealth = GetEntityHealth(cache.ped)
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
