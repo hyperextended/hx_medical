@@ -18,20 +18,6 @@ AddEventHandler('ox:playerLoaded', function(data)
     CurrentHealth = GetEntityHealth(cache.ped)
 end)
 
-SetEntityMaxHealth(cache.ped, 200)
-CurrentHealth = GetEntityHealth(cache.ped)
-
-Citizen.CreateThread(function()
-    while true do
-        PreviousHealth = CurrentHealth
-        CurrentHealth = GetEntityHealth(cache.ped)
-        Wait(200)
-        if CurrentHealth < 126 then
-            SetEntityHealth(cache.ped, 175)
-        end
-    end
-end)
-
 ---@param status string
 ---@param amount number
 local function addStatus(status, amount)
@@ -62,7 +48,6 @@ local function applyStagger(multi, damage, isArmored, bone)
     if isArmored then
         multi = multi / 10
     end
-    print()
     if not lib.table.contains(Data.StaggerAreas, bone) then return else
         addStatus('stagger', damage * multi)
     end
@@ -85,7 +70,6 @@ local function handleDamage(weapon, bone, damageTaken)
     if not weaponData.statuses then return else
         local statuses = weaponData.statuses
         for k, v in pairs(statuses) do
-            print(k, v)
             Data.ApplyStatus[k](v, damageTaken, isArmored, boneName)
         end
     end
@@ -99,7 +83,6 @@ AddEventHandler('gameEventTriggered', function(event, data)
     local damageTaken = PreviousHealth - CurrentHealth
     local hit, bone = GetPedLastDamageBone(cache.ped)
     local armored = GetPedArmour(cache.ped)
-    print(Data.Bones[bone], damageTaken, Data.WeaponsTable[weapon].label)
     handleDamage(weapon, bone, damageTaken)
 
     PreviousHealth = CurrentHealth
@@ -110,21 +93,18 @@ if GetConvarInt('medical:debug', 0) == 1 then
 
     RegisterCommand('gh', function(source, args, rawCommand)
         local name = joaat(tostring(args[1]))
-        print(name)
         lib.setClipboard(name)
     end)
 
     RegisterCommand('generatelist', function(source, args, rawCommand)
         local weaponTable = {}
         for name, data in pairs(Data.QBWeapons) do
-            -- print(name, data.name)
             weaponTable[tonumber(name)] = {
                 label = data.label,
                 name = data.name,
                 type = data.weapontype,
                 class = Data.Weapons[name]
             }
-            print(weaponTable[name].class)
         end
         lib.setClipboard(json.encode(weaponTable, { indent = true }))
     end)
