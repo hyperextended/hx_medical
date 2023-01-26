@@ -45,28 +45,26 @@ local function checkArmor(ped, bone)
 end
 
 local function applyBleed(multi, damage, isArmored)
-    print('adding status', damage, multi)
     if isArmored then
         multi = multi / 10
     end
-    addStatus('stagger', damage * multi)
+    addStatus('bleed', damage * multi)
 end
 
 local function applyUnconscious(multi, damage, isArmored)
-    print('adding status', damage, multi)
     if isArmored then
         multi = multi / 10
     end
     addStatus('unconscious', damage * multi)
 end
 
-local function applyStagger(multi, damage, isArmored)
-    print('adding status', damage, multi)
+local function applyStagger(multi, damage, isArmored, bone)
     if isArmored then
         multi = multi / 10
     end
-    if not Data.StaggerAreas[bone] then return else
-        addStatus('bleed', damage * multi)
+    print()
+    if not lib.table.contains(Data.StaggerAreas, bone) then return else
+        addStatus('stagger', damage * multi)
     end
 end
 
@@ -88,7 +86,7 @@ local function handleDamage(weapon, bone, damageTaken)
         local statuses = weaponData.statuses
         for k, v in pairs(statuses) do
             print(k, v)
-            Data.ApplyStatus[k](v, damageTaken, isArmored)
+            Data.ApplyStatus[k](v, damageTaken, isArmored, boneName)
         end
     end
 end
