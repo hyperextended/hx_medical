@@ -146,9 +146,15 @@ local function startDeathLoop()
 end
 
 
+local function HpRegen()
+    if GetConvarInt('medical:HealthRecharge', 1) == 0 then
+        SetPlayerHealthRechargeMultiplier(cache.ped, 0.0)
+    end
+end
+
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
-    SetPlayerHealthRechargeMultiplier(cache.ped, 0.0)
+    HpRegen()
     startDeathLoop()
 end)
 
@@ -161,6 +167,7 @@ end)
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == cache.resource and cache.ped then
         PlayerIsLoaded = true
+        HpRegen()
         startDeathLoop()
     end
 end)
