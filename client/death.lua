@@ -123,7 +123,7 @@ end
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
-    SetPlayerHealthRechargeMultiplier(cache.ped, 0.0) 
+    SetPlayerHealthRechargeMultiplier(cache.ped, 0.0)
     startDeathLoop()
 end)
 
@@ -148,7 +148,7 @@ if GetConvarInt('medical:debug', 0) == 1 then
 
     AddEventHandler('ox:statusTick', function(statuses)
         if ShowStatus then
-            print(json.encode(statuses, {indent = true}))
+            print(json.encode(statuses, { indent = true }))
         end
     end)
 
@@ -164,3 +164,5 @@ if GetConvarInt('medical:debug', 0) == 1 then
         ShowStatus = not ShowStatus
     end)
 end
+
+startDeathLoop()
