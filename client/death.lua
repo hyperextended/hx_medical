@@ -9,12 +9,14 @@ local canRespawn = false
 --     end
 -- end)
 
-Citizen.CreateThread(function()
+
+-- Disable 0 shot headshot
+--[[ Citizen.CreateThread(function()
     while true do
         Wait(0)
         SetPedSuffersCriticalHits(cache.ped, false)
     end
-end)
+end) ]]
 
 local function revive(full)
     SetPedMaxHealth(cache.ped, 200)
@@ -32,8 +34,8 @@ local function revive(full)
         SetEntityInvincible(cache.ped, false)
         SetEntityHealth(cache.ped, 200)
         canRespawn = false
+        -- Remove bleeding stagger and unconcious statuses
     end
-    print(GetEntityHealth(cache.ped))
 end
 
 local function death()
@@ -90,7 +92,6 @@ local function death()
                     TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
                 end
                 if IsControlJustReleased(2, 51) then
-                    print('released E')
                     if lib.progressCircle({
                         duration = 2000,
                         position = 'bottom',
@@ -122,7 +123,7 @@ end
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
-    --print('isDead:', playerState.dead)
+    SetPlayerHealthRechargeMultiplier(cache.ped, 0.0) 
     startDeathLoop()
 end)
 
@@ -152,14 +153,11 @@ if GetConvarInt('medical:debug', 0) == 1 then
     end)
 
     RegisterCommand('kill', function()
-        print(respawnTimer)
         playerState:set('dead', true)
-        print('state:', playerState.dead)
     end)
 
     RegisterCommand('revive', function()
         playerState:set('dead', false)
-        print('state:', playerState.dead)
     end)
 
     RegisterCommand('status', function()
