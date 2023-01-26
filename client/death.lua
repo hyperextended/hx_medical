@@ -43,6 +43,8 @@ local function death()
         PlayerIsUnconscious = false
         PlayerIsStaggered = false
         TriggerServerEvent('ox:playerDeath', true)
+        TriggerServerEvent('medical:changeStatus', 'bleed', 0)
+        TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
         SetEntityInvincible(cache.ped, true)
         for i = 1, #anims do
             lib.requestAnimDict(anims[i][1])
