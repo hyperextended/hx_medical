@@ -5,11 +5,6 @@ PlayerCanRespawn = false
 CauseOfDeath = nil
 CurrentHealth = 0
 PreviousHealth = CurrentHealth
-anims = {
-    { 'missfinale_c1@', 'lying_dead_player0' },
-    { 'veh@low@front_ps@idle_duck', 'sit' },
-    { 'dead', 'dead_a' },
-}
 
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
