@@ -25,7 +25,6 @@ local function stagger()
         end
         Wait(1000)
     end
-    print('restoring walk', prevWalk)
     if prevWalk ~= 'default' then
         exports.scully_emotemenu:SetWalk(prevWalk)
     else
@@ -35,8 +34,7 @@ local function stagger()
 end
 
 local function MaleFemale()
-    local pedModel = GetEntityModel(cache.ped --[[ Entity ]])
-    if pedModel == 'mp_f_freemode_01' then
+    if player.gender == 'female' then
         walkAnim = 'move_f@injured'
     else
         walkAnim = 'move_m@injured'
