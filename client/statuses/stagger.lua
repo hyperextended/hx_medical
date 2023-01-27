@@ -18,9 +18,8 @@ local function stagger()
             exports.scully_emotemenu:SetWalk(walkAnim)
         end
         SetPedMoveRateOverride(cache.ped, 100 - (intensity / 5))
-        if IsPedSprinting(cache.ped) then chance = chance + 10 end
         if canTrip(cache.ped) and chance > 95 then
-            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.1)
+            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.01)
             SetPedToRagdollWithFall(cache.ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         end
         Wait(1000)

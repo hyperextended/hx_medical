@@ -17,10 +17,11 @@ local function revive()
         end
         EnableAllControlActions(0)
         SetEveryoneIgnorePlayer(cache.playerId, false)
---[[         CurrentHealth = 200
+        --[[         CurrentHealth = 200
         PreviousHealth = 200 ]]
         SetEntityInvincible(cache.ped, false)
         SetEntityHealth(cache.ped, 200)
+        exports.scully_emotemenu:ToggleLimitation(false)
         canRespawn = false
     end
 end
@@ -28,7 +29,7 @@ end
 local function initializeVariables()
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
---[[     CurrentHealth = 100
+    --[[     CurrentHealth = 100
     PreviousHealth = 100 ]]
     RespawnTimer = 10
 end
@@ -39,6 +40,7 @@ local function triggerServerEvents()
     TriggerServerEvent('medical:changeStatus', 'stagger', 0)
     TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
 end
+
 function LoadAnimations()
     for i = 1, #anims do
         lib.requestAnimDict(anims[i][1])
@@ -46,11 +48,18 @@ function LoadAnimations()
 end
 
 local function waitForRagdoll()
+    SetPedCanRagdoll(cache.ped, true)
+    local timer = 0
     while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
+        timer = timer + 1
         Wait(100)
+        if timer > 20 then
+            -- SetPedToRagdoll(cache.ped, 1500, 2500, 0, true, true, true)
+            SetPedCanRagdoll(cache.ped, false)
+            return
+        end
     end
 end
-
 
 local function playDeathAnimation()
     if PlayerIsDead then
@@ -89,7 +98,7 @@ local function checkForRespawn()
                 canCancel = true,
                 useWhileDead = true,
                 allowRagdoll = true,
-                })
+            })
             then
                 lib.hideTextUI()
                 return playerState:set('dead', false)
@@ -99,7 +108,6 @@ local function checkForRespawn()
         end
     end
 end
-
 
 local function respawnPlayer()
     local coords = GetEntityCoords(cache.ped)
@@ -119,11 +127,13 @@ local function respawnPlayer()
         countdownRespawnTimer()
         checkForRespawn()
     end
+    SetPedCanRagdoll(cache.ped, true)
 end
 
 local function death()
     Citizen.CreateThread(function()
         initializeVariables()
+        exports.scully_emotemenu:ToggleLimitation(true)
         SetEntityInvincible(cache.ped, true)
         triggerServerEvents()
         LoadAnimations()
@@ -144,7 +154,6 @@ local function startDeathLoop()
         end
     end)
 end
-
 
 local function HpRegen()
     if GetConvarInt('medical:HealthRecharge', 1) == 0 then

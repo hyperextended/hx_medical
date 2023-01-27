@@ -89,6 +89,10 @@ local function handleDamage(weapon, bone, damageTaken)
     end
 end
 
+RegisterNetEvent('medical:heal', function(...)
+    
+end)
+
 AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
