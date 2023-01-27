@@ -1,10 +1,11 @@
 PlayerIsBleeding = false
 local intensity = 0
+
 local function bleed()
     while PlayerIsBleeding do
-        local tickTime = (100 - intensity) * 100
+        local tickTime = (110 - intensity) * 100
         local tickDamage = 1
-        SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage) 
+        SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
         Wait(tickTime)
     end
 end
