@@ -20,7 +20,7 @@ local function resetUnconscious()
     EnableAllControlActions(0)
     ClearPedTasks(cache.ped)
     SetPedToRagdoll(cache.ped, 2500, 1, 2)
-    exports.scully_emotemenu:ResetExpression()
+    exports.scully_emotemenu:ResetExpression(false)
     timer = 0
     TriggerServerEvent('medical:changeStatus', 'unconscious', 0, 'set')
 end
@@ -30,6 +30,7 @@ local function knockout(timer)
         Citizen.CreateThread(function()
             SetPedCanRagdoll(cache.ped, false)
             DisableAllControlActions(0)
+            exports.scully_emotemenu:ToggleLimitation(true)
             exports.scully_emotemenu:SetExpression('dead_1')
             LoadAnimations()
             if IsPedRagdoll(cache.ped) then

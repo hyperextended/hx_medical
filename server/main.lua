@@ -28,3 +28,11 @@ AddEventHandler('ox:playerLoaded', function(source, userid, charid)
     local player = Ox.GetPlayer(source)
     local isDead = player.get('isDead')
 end)
+
+RegisterNetEvent('medical:revive', function()
+
+end)
+
+RegisterNetEvent('medical:heal', function()
+
+end)

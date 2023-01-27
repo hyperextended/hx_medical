@@ -5,7 +5,29 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
+RegisterNetEvent('medical:revive', function(...)
+    print("PlayerIsDead", PlayerIsDead)
+    if not PlayerIsDead then
+        ClearPedTasksImmediately(cache.ped)
+        SetPedMaxHealth(cache.ped, 200)
+        TriggerServerEvent('ox:playerDeath', false)
+        ClearPedBloodDamage(cache.ped)
+        if cache.vehicle then
+            SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
+        end
+        EnableAllControlActions(0)
+        SetEveryoneIgnorePlayer(cache.playerId, false)
+        --[[         CurrentHealth = 200
+        PreviousHealth = 200 ]]
+        SetEntityInvincible(cache.ped, false)
+        SetEntityHealth(cache.ped, 200)
+        exports.scully_emotemenu:ToggleLimitation(false)
+        canRespawn = false
+    end
+end)
+
 local function revive()
+    -- TriggerServerEvent('medical:revive')
     print("PlayerIsDead", PlayerIsDead)
     if not PlayerIsDead then
         ClearPedTasksImmediately(cache.ped)
