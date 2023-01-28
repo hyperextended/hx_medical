@@ -17,8 +17,6 @@ RegisterNetEvent('medical:revive', function(...)
         end
         EnableAllControlActions(0)
         SetEveryoneIgnorePlayer(cache.playerId, false)
-        --[[         CurrentHealth = 200
-        PreviousHealth = 200 ]]
         SetEntityInvincible(cache.ped, false)
         SetEntityHealth(cache.ped, 200)
         exports.scully_emotemenu:ToggleLimitation(false)
@@ -27,22 +25,19 @@ RegisterNetEvent('medical:revive', function(...)
 end)
 
 local function revive()
-    -- TriggerServerEvent('medical:revive')
     print("PlayerIsDead", PlayerIsDead)
     if not PlayerIsDead then
         ClearPedTasksImmediately(cache.ped)
         SetPedMaxHealth(cache.ped, 200)
-        TriggerServerEvent('ox:playerDeath', false)
+        SetEntityHealth(cache.ped, 200)
         ClearPedBloodDamage(cache.ped)
         if cache.vehicle then
             SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
         end
         EnableAllControlActions(0)
         SetEveryoneIgnorePlayer(cache.playerId, false)
-        --[[         CurrentHealth = 200
-        PreviousHealth = 200 ]]
         SetEntityInvincible(cache.ped, false)
-        SetEntityHealth(cache.ped, 200)
+        TriggerServerEvent('ox:playerDeath', false)
         exports.scully_emotemenu:ToggleLimitation(false)
         canRespawn = false
     end
@@ -51,8 +46,6 @@ end
 local function initializeVariables()
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
-    --[[     CurrentHealth = 100
-    PreviousHealth = 100 ]]
     RespawnTimer = 10
 end
 
@@ -68,15 +61,12 @@ function LoadAnimations()
         lib.requestAnimDict(anims[i][1])
     end
 end
-
 local function waitForRagdoll()
-    SetPedCanRagdoll(cache.ped, true)
     local timer = 0
     while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
         timer = timer + 1
         Wait(100)
         if timer > 20 then
-            -- SetPedToRagdoll(cache.ped, 1500, 2500, 0, true, true, true)
             SetPedCanRagdoll(cache.ped, false)
             return
         end
@@ -86,7 +76,8 @@ end
 local function playDeathAnimation()
     if PlayerIsDead then
         local anim = cache.vehicle and anims[2] or anims[1]
-        if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
+        local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
+        if not isInAnim then
             TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
         end
     end
@@ -161,7 +152,6 @@ local function death()
         LoadAnimations()
         waitForRagdoll()
         respawnPlayer()
-
     end)
 end
 
