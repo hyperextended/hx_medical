@@ -32,6 +32,7 @@ local function bleed()
     end
 end
 
+
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.bleed then return end
     if not PlayerIsBleeding and statuses.bleed > 25 then
