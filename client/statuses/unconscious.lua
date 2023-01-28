@@ -15,14 +15,17 @@ local function playUnconsciousAnimation()
 end
 
 local function resetUnconscious()
+    if lib.progressActive() then
+        lib.cancelProgress()
+    end
     SetPedCanRagdoll(cache.ped, true)
-    PlayerIsUnconscious = false
     EnableAllControlActions(0)
     ClearPedTasks(cache.ped)
     SetPedToRagdoll(cache.ped, 2500, 1, 2)
-    exports.scully_emotemenu:ResetExpression(false)
+    exports.scully_emotemenu:ResetExpression()
+    exports.scully_emotemenu:ToggleLimitation(false)
     timer = 0
-    TriggerServerEvent('medical:changeStatus', 'unconscious', 0, 'set')
+    PlayerIsUnconscious = false
 end
 
 local function knockout(timer)
@@ -45,30 +48,30 @@ local function knockout(timer)
             duration = timer * 1000,
             label = 'unconscious',
             useWhileDead = true,
-            allowRagDoll = true,
+            allowRagdoll = true,
             allowCuffed = true,
             allowFalling = true,
             canCancel = false,
         })
         then
-            resetUnconscious()
+            TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
         end
     end
 end
 
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.unconscious then return end
-    if not PlayerIsUnconscious then
-        if statuses.unconscious > 5 then
-            PlayerIsUnconscious = true
-            lib.notify({
-                title = 'Medical',
-                description = 'You are unconscious!',
-                type = 'error'
-            })
-            timer = statuses.unconscious
-            knockout(timer)
-        end
+    if not PlayerIsUnconscious and statuses.unconscious > 5 then
+        PlayerIsUnconscious = true
+        lib.notify({
+            title = 'Medical',
+            description = 'You are unconscious!',
+            type = 'error'
+        })
+        timer = statuses.unconscious
+        knockout(timer)
+    elseif PlayerIsUnconscious and statuses.unconscious == 0 then
+        resetUnconscious()
     end
     timer = statuses.unconscious
 end)
