@@ -52,6 +52,16 @@ AddEventHandler('ox:statusTick', function(statuses)
         ClearTimecycleModifier()
     end
     intensity = statuses.bleed
+    print(PlayerIsBleeding)
+    if PlayerIsBleeding then
+      lib.notify({
+            id = "medical_playerbleed",
+            title = 'Medical',
+            duration = 1000,
+            description = 'You are bleeding!',
+            type = 'error'
+        })
+    end
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
