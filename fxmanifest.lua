@@ -11,6 +11,7 @@ dependencies {
     "/onesync",
     "ox_core",
     "ox_lib",
+    "scully_emotemenu",
     -- "ox_inventory",
 }
 
