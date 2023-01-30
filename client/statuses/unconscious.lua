@@ -1,4 +1,5 @@
 PlayerIsUnconscious = false
+LocalPlayer.state:set('unconscious', false, true)
 local timer = 0
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
@@ -6,19 +7,13 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
-local function playUnconsciousAnimation()
-    local anim = cache.vehicle and anims[2] or anims[1]
-    if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
-        TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
-    end
-    Wait(500)
-end
-
 local function resetUnconscious()
     if lib.progressActive() then
         lib.cancelProgress()
     end
     SetPedCanRagdoll(cache.ped, true)
+    PlayerIsUnconscious = false
+    LocalPlayer.state:set('unconscious', false, true)
     EnableAllControlActions(0)
     ClearPedTasks(cache.ped)
     SetPedToRagdoll(cache.ped, 2500, 1, 2)
@@ -28,7 +23,28 @@ local function resetUnconscious()
     PlayerIsUnconscious = false
 end
 
+local function playUnconsciousAnimation()
+    local anim = cache.vehicle and anims[2] or anims[1]
+    if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
+        TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
+    end
+end
+
+local function countdownUnconsciousTimer(timer)
+    print(timer)
+    while timer > 0 and PlayerIsUnconscious do
+        playUnconsciousAnimation()
+        lib.showTextUI(('Unconscious - %s'):format(timer))
+        timer = timer - 1
+        Wait(1000)
+        lib.hideTextUI()
+        if not PlayerIsDead or not PlayerIsUnconscious then resetUnconscious() return end
+    end
+    return true
+end
+
 local function knockout(timer)
+    if PlayerIsDead then return end
     if PlayerIsUnconscious then
         Citizen.CreateThread(function()
             SetPedCanRagdoll(cache.ped, false)
@@ -41,8 +57,10 @@ local function knockout(timer)
             end
             while not PlayerIsDead and PlayerIsUnconscious do
                 playUnconsciousAnimation()
+                Wait(100)
             end
         end)
+
         Wait(500)
         if lib.progressCircle({
             duration = timer * 1000,
@@ -61,15 +79,18 @@ end
 
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.unconscious then return end
-    if not PlayerIsUnconscious and statuses.unconscious > 5 then
-        PlayerIsUnconscious = true
-        lib.notify({
-            title = 'Medical',
-            description = 'You are unconscious!',
-            type = 'error'
-        })
-        timer = statuses.unconscious
-        knockout(timer)
+    if not PlayerIsUnconscious then
+        if statuses.unconscious > 5 then
+            PlayerIsUnconscious = true
+            LocalPlayer.state:set('unconscious', true, true)
+            lib.notify({
+                title = 'Medical',
+                description = 'You are unconscious!',
+                type = 'error'
+            })
+            timer = statuses.unconscious
+            knockout(timer)
+        end
     elseif PlayerIsUnconscious and statuses.unconscious == 0 then
         resetUnconscious()
     end

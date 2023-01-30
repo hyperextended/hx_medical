@@ -11,6 +11,7 @@ dependencies {
     "/onesync",
     "ox_core",
     "ox_lib",
+    "scully_emotemenu",
     -- "ox_inventory",
 }
 
@@ -27,10 +28,12 @@ client_scripts {
     'client/death.lua',
     'client/wounding.lua',
     'client/statuses/*.lua',
+    'client/target/*.lua',
 }
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     '@ox_core/imports/server.lua',
     'server/main.lua',
+    'server/target/smellingsalt.lua'
 }

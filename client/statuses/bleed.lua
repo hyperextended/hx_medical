@@ -1,13 +1,33 @@
 PlayerIsBleeding = false
 local intensity = 0
+local blurCounter = 0
+
+local function blurScreen()
+    Citizen.CreateThread(function()
+        TriggerScreenblurFadeIn(100)
+        Wait(50)
+        TriggerScreenblurFadeOut(100)
+    end)
+end
 
 local function bleed()
-    while PlayerIsBleeding do
+    local desaturation = 0
+    while PlayerIsBleeding and not PlayerIsDead do
+        if PlayerIsDead then return end
+        local coords = GetEntityCoords(cache.ped)
+        local forwardVector = GetEntityForwardVector(cache.ped)
         local tickTime = (110 - intensity) * 100
         local tickDamage = 1
-        SetTimecycleModifier("glasses_red") -- might not needed if notification is not stuck on screen
-        SetTimecycleModifierStrength(intensity/100) -- might crash the game idk need more test
-        SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
+        if desaturation <= 0.80 then desaturation += 0.01 end
+        print(desaturation)
+        blurCounter += 1
+        if blurCounter >= 3 then blurScreen() blurCounter = 0 end
+        SetTimecycleModifier("rply_saturation_neg") -- might not needed if notification is not stuck on screen
+        SetTimecycleModifierStrength(desaturation) -- might crash the game idk need more test
+        -- SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
+        ApplyDamageToPed(cache.ped, tickDamage, false)
+        ApplyPedBlood(cache.ped, 0, math.random(0, 4) + 0.0, math.random(-0, 4) + 0.0, math.random(-0, 4) + 0.0,
+            'wound_sheet')
         Wait(tickTime)
     end
 end
@@ -18,7 +38,12 @@ AddEventHandler('ox:statusTick', function(statuses)
     if not PlayerIsBleeding and statuses.bleed > 25 then
         PlayerIsBleeding = true
         intensity = statuses.bleed
-
+        lib.notify({
+            title = 'Status',
+            duration = 3000,
+            description = 'You are bleeding!',
+            type = 'error'
+        })
         bleed()
     elseif PlayerIsBleeding and statuses.bleed == 0 then
         PlayerIsBleeding = false
@@ -43,8 +68,7 @@ if GetConvarInt('medical:debug', 0) == 1 then
         if intensity > 0 then
             TriggerServerEvent('medical:changeStatus', 'bleed', 0)
         else
-            TriggerServerEvent('medical:changeStatus', 'bleed', tonumber(args[1]))
+            TriggerServerEvent('medical:changeStatus', 'bleed', tonumber(args[1]) or 100)
         end
-        bleed(args[1])
     end)
 end

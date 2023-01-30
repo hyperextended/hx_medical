@@ -1,16 +1,13 @@
-playerState = LocalPlayer.state
 PlayerIsLoaded = false
 PlayerIsDead = false
 PlayerCanRespawn = false
---CauseOfDeath = nil
+--CauseOfDeath = nil I CANT WAIT TO WORK ON THIS :))))) (huge irony thanks)
 
 local function SyncHealth()
     CurrentHealth = GetEntityHealth(cache.ped)
-    print('Current: ', CurrentHealth, 'Prev: ', PreviousHealth)
     if CurrentHealth ~= PreviousHealth then
         PreviousHealth = CurrentHealth
     end
-    print('Current: ', CurrentHealth, 'Prev: ', PreviousHealth)
 end
 
 local function DamageTaken()
@@ -83,14 +80,16 @@ local function handleDamage(weapon, bone, damageTaken)
     if not weaponData.statuses then return else
         local statuses = weaponData.statuses
         for k, v in pairs(statuses) do
-            print("Multi:",v,"DamageTaken",damageTaken,"isArmored", isArmored, "bone: ", boneName, "status", k)
+            if GetConvarInt('medical:debug', 0) == 1 then
+                print("Multi:", v, "DamageTaken", damageTaken, "isArmored", isArmored, "bone: ", boneName, "status", k)
+            end
             Data.ApplyStatus[k](v, damageTaken, isArmored, boneName)
         end
     end
 end
 
-RegisterNetEvent('medical:heal', function(...)
-    
+RegisterNetEvent('medical:heal', function(amount)
+    SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + amount)
 end)
 
 
@@ -106,13 +105,8 @@ AddEventHandler('gameEventTriggered', function(event, data)
     handleDamage(weapon, bone, damageTaken)
 end)
 
+
 if GetConvarInt('medical:debug', 0) == 1 then
-
-    RegisterCommand('gh', function(source, args, rawCommand)
-        local name = joaat(tostring(args[1]))
-        lib.setClipboard(name)
-    end)
-
     RegisterCommand('generatelist', function(source, args, rawCommand)
         local weaponTable = {}
         for name, data in pairs(Data.QBWeapons) do
@@ -125,5 +119,4 @@ if GetConvarInt('medical:debug', 0) == 1 then
         end
         lib.setClipboard(json.encode(weaponTable, { indent = true }))
     end)
-
 end
