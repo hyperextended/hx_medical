@@ -1,8 +1,7 @@
-playerState = LocalPlayer.state
 PlayerIsLoaded = false
 PlayerIsDead = false
 PlayerCanRespawn = false
---CauseOfDeath = nil
+--CauseOfDeath = nil I CANT WAIT TO WORK ON THIS :))))) (huge irony thanks)
 
 local function SyncHealth()
     CurrentHealth = GetEntityHealth(cache.ped)
