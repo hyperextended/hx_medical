@@ -1,5 +1,6 @@
 local canRespawn = false
 local RespawnTimer = 0
+local timerRunning = false
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
     { 'veh@low@front_ps@idle_duck', 'sit' },
@@ -41,8 +42,9 @@ local function initializeVariables()
 end
 
 local function resetStatus()
-    local statuses = { 'hunger', 'thirst', 'stagger', 'unconscious', 'bleed' }
+    local statuses = { 'hunger', 'thirst', 'stagger', 'unconscious', 'bleed', 'stress' }
     for i = 1, #statuses do
+        print(statuses[i])
         TriggerServerEvent('medical:changeStatus', statuses[i], 0)
     end
 end
@@ -79,10 +81,13 @@ local function playDeathAnimation()
 end
 
 local function countdownRespawnTimer()
-    while RespawnTimer > 0 do
+    print("starting timer")
+    while RespawnTimer > 0 and PlayerIsDead do
+        print('death timer tick')
         playDeathAnimation()
         lib.showTextUI(('Respawn in %s'):format(RespawnTimer))
-        RespawnTimer = RespawnTimer - 1
+        RespawnTimer -= 1
+        print(RespawnTimer)
         Wait(1000)
         lib.hideTextUI()
         if not PlayerIsDead then RespawnTimer = 0 return end
@@ -129,7 +134,6 @@ local function setDead()
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:SetExpression('dead_1')
-    countdownRespawnTimer()
 end
 
 local function death()
@@ -140,10 +144,10 @@ local function death()
     LoadAnimations()
     waitForRagdoll()
     setDead()
+    countdownRespawnTimer()
     Citizen.CreateThread(function()
         while PlayerIsDead and not canRespawn do playDeathAnimation() Wait(0) end
     end)
-    countdownRespawnTimer()
     Citizen.CreateThread(function()
         checkForRespawn()
     end)
@@ -156,7 +160,6 @@ local function startDeathLoop()
             cache.ped = PlayerPedId()
             if not PlayerIsDead and IsPedDeadOrDying(cache.ped, true) then
                 playerState:set('dead', true, true)
-                death()
             end
         end
     end)
@@ -189,9 +192,11 @@ AddEventHandler('onResourceStart', function(resourceName)
 end)
 
 AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
+    if value == playerState.dead then return end
     if value == true then
         PlayerIsDead = true
         TriggerServerEvent('ox:playerDeath', true)
+        print('triggering death')
         death()
     else
         PlayerIsDead = false

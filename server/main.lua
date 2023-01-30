@@ -5,7 +5,7 @@
 
 -- TODO: REPLACE UNSECURE EVENT WITH SERVER-SIDE LOGIC
 RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
-    print(status, value, changeType)
+    -- print(status, value, changeType)
     local player = Ox.GetPlayer(source)
     if changeType == 'add' then
         player.addStatus(status, value)
@@ -46,3 +46,15 @@ lib.addCommand('group.admin', { 'kill' }, function(source, args)
     local playerState = player.getState()
     playerState:set('dead', true, true)
 end, { 'target:?number' })
+
+
+lib.addCommand('group.admin', { 'setStatus' }, function(source, args)
+    if args.status == nil then return end
+    local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
+    local player = Ox.GetPlayer(source)
+    for i = 1, #statuses do
+        if statuses[i] == args.status then
+            player.setStatus(args.status, tonumber(args.amount) or 100)
+        end
+    end
+end, { 'status:string', 'amount:?number' })

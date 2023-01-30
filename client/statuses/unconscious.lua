@@ -6,14 +6,6 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
-local function playUnconsciousAnimation()
-    local anim = cache.vehicle and anims[2] or anims[1]
-    if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
-        TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
-    end
-    Wait(500)
-end
-
 local function resetUnconscious()
     SetPedCanRagdoll(cache.ped, true)
     PlayerIsUnconscious = false
@@ -23,6 +15,26 @@ local function resetUnconscious()
     exports.scully_emotemenu:ResetExpression()
     timer = 0
     TriggerServerEvent('medical:changeStatus', 'unconscious', 0, 'set')
+end
+
+local function playUnconsciousAnimation()
+    local anim = cache.vehicle and anims[2] or anims[1]
+    if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
+        TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
+    end
+end
+
+local function countdownUnconsciousTimer(timer)
+    print(timer)
+    while timer > 0 and PlayerIsUnconscious do
+        playUnconsciousAnimation()
+        lib.showTextUI(('Unconscious - %s'):format(timer))
+        timer = timer - 1
+        Wait(1000)
+        lib.hideTextUI()
+        if not PlayerIsDead or not PlayerIsUnconscious then resetUnconscious() return end
+    end
+    return true
 end
 
 local function knockout(timer)
@@ -39,8 +51,10 @@ local function knockout(timer)
             end
             while not PlayerIsDead and PlayerIsUnconscious do
                 playUnconsciousAnimation()
+                Wait(100)
             end
         end)
+
         Wait(500)
         if lib.progressCircle({
             duration = timer * 1000,
