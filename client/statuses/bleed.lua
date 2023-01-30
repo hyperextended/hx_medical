@@ -4,9 +4,9 @@ local blurCounter = 0
 
 local function blurScreen()
     Citizen.CreateThread(function()
-        TriggerScreenblurFadeIn(100)
-        Wait(50)
-        TriggerScreenblurFadeOut(100)
+        TriggerScreenblurFadeIn(1000.0)
+        Wait(1000 * (intensity / 10))
+        TriggerScreenblurFadeOut(1000.0)
     end)
 end
 
@@ -18,10 +18,10 @@ local function bleed()
         local forwardVector = GetEntityForwardVector(cache.ped)
         local tickTime = (110 - intensity) * 100
         local tickDamage = 1
-        if desaturation <= 0.80 then desaturation += 0.01 end
+        if desaturation <= 0.80 then desaturation += 0.02 end
         print(desaturation)
         blurCounter += 1
-        if blurCounter >= 3 then blurScreen() blurCounter = 0 end
+        if blurCounter >= 5 then blurScreen() blurCounter = 0 end
         SetTimecycleModifier("rply_saturation_neg") -- might not needed if notification is not stuck on screen
         SetTimecycleModifierStrength(desaturation) -- might crash the game idk need more test
         -- SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
@@ -47,6 +47,7 @@ AddEventHandler('ox:statusTick', function(statuses)
     elseif PlayerIsBleeding and statuses.bleed == 0 then
         PlayerIsBleeding = false
         intensity = 0
+        SetTimecycleModifierStrength(0)
         ClearTimecycleModifier()
     end
     intensity = statuses.bleed
