@@ -248,7 +248,7 @@ stagger = 1,
         class = 'HEAVY_IMPACT',
         name = "weapon_crowbar",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-618237638] = {
@@ -392,7 +392,7 @@ stagger = 1,
         class = 'HEAVY_IMPACT',
         name = "weapon_bat",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [1593441988] = {
@@ -473,7 +473,7 @@ stagger = 1,
         class = 'class = "HEAVY_IMPACT"',
         name = "weapon_flashlight",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-72657034] = {
@@ -500,7 +500,7 @@ stagger = 1,
         class = 'class = "HEAVY_IMPACT"',
         name = "weapon_briefcase",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-2066285827] = {
@@ -635,7 +635,7 @@ stagger = 1,
         class = 'HEAVY_IMPACT',
         name = "weapon_hammer",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-86904375] = {
@@ -671,7 +671,7 @@ stagger = 1,
         class = 'HEAVY_IMPACT',
         name = "weapon_poolcue",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-1121678507] = {
@@ -851,7 +851,7 @@ stagger = 1,
         class = 'HEAVY_IMPACT',
         name = "weapon_wrench",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [205991906] = {
@@ -1031,7 +1031,7 @@ stagger = 1,
         class = '',
         name = "weapon_golfclub",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [940833800] = {
@@ -1076,7 +1076,7 @@ stagger = 1,
         class = '',
         name = "weapon_nightstick",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [100416529] = {
@@ -1094,7 +1094,7 @@ stagger = 1,
         class = '',
         name = "weapon_garbagebag",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [317205821] = {
@@ -1130,7 +1130,7 @@ stagger = 1,
         class = '',
         name = "weapon_briefcase_02",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [-1654528753] = {
@@ -1184,7 +1184,7 @@ stagger = 1,
         class = '',
         name = "weapon_unarmed",
         statuses = {
-                unconcious = .1
+                unconcious = 0.1
         }
     },
         [406929569] = {
@@ -1258,5 +1258,5 @@ stagger = 1,
         statuses = {
                 
         }
-    }
+    },
 }
