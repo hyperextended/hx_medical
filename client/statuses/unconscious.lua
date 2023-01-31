@@ -1,4 +1,5 @@
 PlayerIsUnconscious = false
+LocalPlayer.state:set('unconscious', false, true)
 local timer = 0
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
@@ -9,10 +10,12 @@ local anims = {
 local function resetUnconscious()
     SetPedCanRagdoll(cache.ped, true)
     PlayerIsUnconscious = false
+    LocalPlayer.state:set('unconscious', false, true)
     EnableAllControlActions(0)
     ClearPedTasks(cache.ped)
     SetPedToRagdoll(cache.ped, 2500, 1, 2)
     exports.scully_emotemenu:ResetExpression()
+    exports.scully_emotemenu:ToggleLimitation(false)
     timer = 0
     TriggerServerEvent('medical:changeStatus', 'unconscious', 0, 'set')
 end
@@ -76,6 +79,7 @@ AddEventHandler('ox:statusTick', function(statuses)
     if not PlayerIsUnconscious then
         if statuses.unconscious > 5 then
             PlayerIsUnconscious = true
+            LocalPlayer.state:set('unconscious', true, true)
             lib.notify({
                 title = 'Medical',
                 description = 'You are unconscious!',
@@ -84,6 +88,8 @@ AddEventHandler('ox:statusTick', function(statuses)
             timer = statuses.unconscious
             knockout(timer)
         end
+    elseif PlayerIsUnconscious and statuses.unconscious == 0 then
+        resetUnconscious()
     end
     timer = statuses.unconscious
 end)
