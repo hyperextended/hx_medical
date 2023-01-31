@@ -153,11 +153,11 @@ Data.BoneIndexes = { -- Correspond bone labels to their hash number
 Data.WeaponsTable = {
         [-1955384325] = {
         type = "Miscellaneous",
-        label = "Bleeding",
+        label = "bleed",
         class = '',
-        name = "weapon_bleeding",
+        name = "weapon_bleed",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-842959696] = {
@@ -203,7 +203,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_specialcarbine_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [487013001] = {
@@ -212,7 +212,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_pumpshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1075685676] = {
@@ -221,7 +221,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_pistol_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1834847097] = {
@@ -230,7 +230,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_dagger",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [125959754] = {
@@ -239,7 +239,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_compactlauncher",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-2067956739] = {
@@ -266,7 +266,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_pistol50",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-598887786] = {
@@ -275,7 +275,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_marksmanpistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1045183535] = {
@@ -284,7 +284,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_revolver",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [171789620] = {
@@ -293,7 +293,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_combatpdw",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1716189206] = {
@@ -302,7 +302,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_knife",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1171102963] = {
@@ -320,7 +320,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_hominglauncher",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1076751822] = {
@@ -329,7 +329,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_snspistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1198879012] = {
@@ -338,7 +338,7 @@ stagger = 1,
         class = 'FIRE',
         name = "weapon_flaregun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [910830060] = {
@@ -356,7 +356,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_grenade",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1466123874] = {
@@ -365,7 +365,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_musket",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1936677264] = {
@@ -383,7 +383,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_pumpshotgun_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1786099057] = {
@@ -401,7 +401,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_combatpistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1785463520] = {
@@ -410,7 +410,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_marksmanrifle_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1074790547] = {
@@ -419,7 +419,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_assaultrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [984333226] = {
@@ -428,7 +428,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_heavyshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1357824103] = {
@@ -437,7 +437,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_advancedrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-581044007] = {
@@ -446,7 +446,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_machete",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [324215364] = {
@@ -455,7 +455,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_microsmg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1063057011] = {
@@ -464,7 +464,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_specialcarbine",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1951375401] = {
@@ -491,7 +491,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_minigun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-2000187721] = {
@@ -509,7 +509,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_bullpuprifle_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-544306709] = {
@@ -536,7 +536,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_smg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-608341376] = {
@@ -545,7 +545,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_combatmg_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-538741184] = {
@@ -554,7 +554,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_switchblade",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [2024373456] = {
@@ -563,7 +563,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_smg_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-879347409] = {
@@ -572,7 +572,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_revolver_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [615608432] = {
@@ -590,7 +590,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_sawnoffshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [539292904] = {
@@ -599,7 +599,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_explosion",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-270015777] = {
@@ -608,7 +608,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_assaultsmg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1223143800] = {
@@ -617,7 +617,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_barbed_wire",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-37975472] = {
@@ -644,7 +644,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_carbinerifle_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-275439685] = {
@@ -653,7 +653,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_dbshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1649403952] = {
@@ -662,7 +662,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_compactrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1810795771] = {
@@ -680,7 +680,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_minismg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [883325847] = {
@@ -698,7 +698,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_heli_crash",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-952879014] = {
@@ -707,7 +707,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_marksmanrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [137902532] = {
@@ -716,7 +716,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_vintagepistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1312131151] = {
@@ -725,7 +725,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_rpg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-947031628] = {
@@ -734,7 +734,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_heavyrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-494615257] = {
@@ -743,7 +743,7 @@ stagger = 1,
         class = 'SHOTGUN',
         name = "weapon_assaultshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1660422300] = {
@@ -752,7 +752,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_mg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1420407917] = {
@@ -761,7 +761,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_proxmine",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-100946242] = {
@@ -770,7 +770,7 @@ stagger = 1,
         class = 'WILDLIFE',
         name = "weapon_animal",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1746263880] = {
@@ -779,7 +779,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_doubleaction",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1833087301] = {
@@ -797,7 +797,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_combatmg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [2132975508] = {
@@ -806,7 +806,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_bullpuprifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-619010992] = {
@@ -815,7 +815,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_machinepistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1627465347] = {
@@ -824,7 +824,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_gusenberg",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [911657153] = {
@@ -860,7 +860,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_heavysniper",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-771403250] = {
@@ -869,7 +869,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_heavypistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [148160082] = {
@@ -878,7 +878,7 @@ stagger = 1,
         class = 'WILDLIFE',
         name = "weapon_cougar",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [961495388] = {
@@ -887,7 +887,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_assaultrifle_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1233104067] = {
@@ -905,7 +905,7 @@ stagger = 1,
         class = 'HIGH_CALIBER',
         name = "weapon_heavysniper_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-2009644972] = {
@@ -914,7 +914,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_snspistol_mk2",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-102973651] = {
@@ -923,7 +923,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_hatchet",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1169823560] = {
@@ -932,7 +932,7 @@ stagger = 1,
         class = 'EXPLOSIVE',
         name = "weapon_pipebomb",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-853065399] = {
@@ -941,7 +941,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_battleaxe",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-868994466] = {
@@ -977,7 +977,7 @@ stagger = 1,
         class = 'MEDIUM_CALIBER',
         name = "weapon_carbinerifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [101631238] = {
@@ -1004,7 +1004,7 @@ stagger = 1,
         class = 'CUTTING',
         name = "weapon_bottle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [584646201] = {
@@ -1013,7 +1013,7 @@ stagger = 1,
         class = 'SMALL_CALIBER',
         name = "weapon_appistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1238556825] = {
@@ -1040,7 +1040,7 @@ stagger = 1,
         class = '',
         name = "weapon_stone_hatchet",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1470379660] = {
@@ -1049,7 +1049,7 @@ stagger = 1,
         class = '',
         name = "weapon_gadgetpistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [600439132] = {
@@ -1085,7 +1085,7 @@ stagger = 1,
         class = '',
         name = "weapon_sniperrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-499989876] = {
@@ -1103,7 +1103,7 @@ stagger = 1,
         class = '',
         name = "weapon_autoshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [2138347493] = {
@@ -1121,7 +1121,7 @@ stagger = 1,
         class = '',
         name = "weapon_navyrevolver",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [28811031] = {
@@ -1139,7 +1139,7 @@ stagger = 1,
         class = '',
         name = "weapon_bullpupshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1305664598] = {
@@ -1157,7 +1157,7 @@ stagger = 1,
         class = '',
         name = "weapon_grenadelauncher",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1198256469] = {
@@ -1202,7 +1202,7 @@ stagger = 1,
         class = '',
         name = "weapon_remotesniper",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [1309015656] = {
@@ -1220,7 +1220,7 @@ stagger = 1,
         class = '',
         name = "weapon_combatshotgun",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-1658906650] = {
@@ -1229,7 +1229,7 @@ stagger = 1,
         class = '',
         name = "weapon_militaryrifle",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [126349499] = {
@@ -1247,7 +1247,7 @@ stagger = 1,
         class = '',
         name = "weapon_ceramicpistol",
         statuses = {
-                bleeding = 1
+                bleed = 1
         }
     },
         [-800287667] = {
