@@ -19,13 +19,15 @@ shared_scripts {
     '@ox_lib/init.lua',
     'locales/en.lua',
     'locales/*.lua',
+    'shared/data.lua',
+    'shared/weapons.lua',
 }
 
 client_scripts {
     '@ox_core/imports/client.lua',
-    'data/weapons.lua',
     'client/main.lua',
     'client/death.lua',
+    'client/hospital.lua',
     'client/wounding.lua',
     'client/statuses/*.lua',
     'client/target/*.lua',
@@ -37,3 +39,5 @@ server_scripts {
     'server/main.lua',
     'server/target/smellingsalt.lua'
 }
+
+server_export ''
