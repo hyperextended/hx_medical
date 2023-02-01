@@ -37,3 +37,5 @@ server_scripts {
     '@ox_core/imports/server.lua',
     'server/main.lua',
 }
+
+server_export ''
