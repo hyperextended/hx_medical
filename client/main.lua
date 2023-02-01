@@ -3,6 +3,8 @@ PlayerIsDead = false
 PlayerCanRespawn = false
 --CauseOfDeath = nil I CANT WAIT TO WORK ON THIS :))))) (huge irony thanks)
 
+PlayerState = LocalPlayer.state
+
 local function SyncHealth()
     CurrentHealth = GetEntityHealth(cache.ped)
     if CurrentHealth ~= PreviousHealth then
