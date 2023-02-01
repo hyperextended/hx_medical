@@ -37,6 +37,7 @@ AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.bleed then return end
     if not PlayerIsBleeding and statuses.bleed > 25 then
         PlayerIsBleeding = true
+        PlayerState:set('bleeding', true, true)
         intensity = statuses.bleed
         lib.notify({
             title = 'Status',
@@ -47,12 +48,12 @@ AddEventHandler('ox:statusTick', function(statuses)
         bleed()
     elseif PlayerIsBleeding and statuses.bleed == 0 then
         PlayerIsBleeding = false
+        PlayerState:set('bleeding', false, true)
         intensity = 0
         SetTimecycleModifierStrength(0)
         ClearTimecycleModifier()
     end
     intensity = statuses.bleed
-    print(PlayerIsBleeding)
     if PlayerIsBleeding then
       lib.notify({
             id = "medical_playerbleed",

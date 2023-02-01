@@ -1,5 +1,4 @@
 PlayerIsUnconscious = false
-LocalPlayer.state:set('unconscious', false, true)
 local timer = 0
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
