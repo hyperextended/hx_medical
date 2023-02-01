@@ -99,16 +99,11 @@ AddEventHandler('gameEventTriggered', function(event, data)
     if victim ~= cache.ped then return end
     local damageTaken = DamageTaken()
 
-    if GetEntityHealth(cache.ped) < 10 then
-        print('force injured anim')
-    end
-
     SyncHealth()
     local hit, bone = GetPedLastDamageBone(cache.ped)
     local armored = GetPedArmour(cache.ped)
     handleDamage(weapon, bone, damageTaken)
 end)
-
 
 if GetConvarInt('medical:debug', 0) == 1 then
     RegisterCommand('generatelist', function(source, args, rawCommand)
