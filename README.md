@@ -35,6 +35,7 @@ exports.rp_medical:Revive(target)
 
 ### Optional
 
+- [ox_target](https://github.com/overextended/ox_target)
 - [xSound](https://github.com/Xogy/xsound/releases/latest/)
 
 ## Installation
