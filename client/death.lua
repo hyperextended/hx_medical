@@ -132,6 +132,9 @@ local function setDead()
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:SetExpression('dead_1')
+    if lib.progressActive() then
+        lib.cancelProgress()
+    end
 end
 
 local function death()
