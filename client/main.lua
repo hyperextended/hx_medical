@@ -3,7 +3,7 @@ PlayerIsDead = false
 PlayerCanRespawn = false
 --CauseOfDeath = nil I CANT WAIT TO WORK ON THIS :))))) (huge irony thanks)
 
-PlayerState = LocalPlayer.state
+playerState = LocalPlayer.state
 
 local function SyncHealth()
     CurrentHealth = GetEntityHealth(cache.ped)
@@ -23,7 +23,6 @@ AddEventHandler('ox:playerLoaded', function(data)
     SyncHealth()
 end)
 
--- Support resource restart
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == cache.resource and cache.ped then
         PlayerIsLoaded = true
@@ -31,8 +30,6 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
----@param status string
----@param amount number
 local function addStatus(status, amount)
     TriggerServerEvent('medical:changeStatus', status, amount, 'add')
 end
@@ -101,6 +98,11 @@ AddEventHandler('gameEventTriggered', function(event, data)
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
     if victim ~= cache.ped then return end
     local damageTaken = DamageTaken()
+
+    if GetEntityHealth(cache.ped) < 10 then
+        print('force injured anim')
+    end
+
     SyncHealth()
     local hit, bone = GetPedLastDamageBone(cache.ped)
     local armored = GetPedArmour(cache.ped)
