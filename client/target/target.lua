@@ -1,7 +1,10 @@
 -- To use smelling_salt go to your server.cfg and do setr medical:smellingsalt 1
 if GetConvarInt('medical:smellingsalt', 0) ~= 1 then return end
 
-local function wakePlayer(ped)
+local saltAnim = {"amb@world_human_bum_wash@male@low@idle_a", "idle_a"}
+local bleedAnim = {"amb@world_human_bum_wash@male@low@idle_a", "idle_a"}
+
+local function curePlayer(ped, cureType, animTable)
     TaskTurnPedToFaceEntity(cache.ped, ped, -1)
     while not IsPedFacingPed(cache.ped, ped, 10) do
         Wait(200)
@@ -15,21 +18,18 @@ local function wakePlayer(ped)
             car = true,
         },
         anim = {
-            dict = "amb@world_human_bum_wash@male@low@idle_a",
-            clip = "idle_a",
+            dict = animTable[1],
+            clip = animTable[2],
             flag = 10
         }
     })
     then
         local playerId = GetPlayerServerId(NetworkGetPlayerIndexFromPed(ped))
-        local done = lib.callback.await('medical:smellingsaltOnPlayer', 200, playerId)
-        if done then
-            
-        end
+        local done = lib.callback.await('medical:curePlayer', 200, playerId, cureType)
+        if done then return end
     end
 end
 
-print("run")
 local options = {
     {
         name = "medical:smelling_salt",
@@ -40,15 +40,31 @@ local options = {
         canInteract = function(entity)
             local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
             local isUnconscious = Player(target).state.unconscious
-            print(isUnconscious)
             if isUnconscious then
                 return true
             end
         end,
         onSelect = function(data)
-            wakePlayer(data.entity)
+            curePlayer(data.entity, 'unconscious', saltAnim)
         end
-    }
+    },
+    {
+        name = "medical:bleeding_stop",
+        icon = "fa-solid fa-handshake-angle",
+        label = "Use Bandage",
+        distance = 1,
+        items = "bandage",
+        canInteract = function(entity)
+            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+            local isBleeding = Player(target).state.bleed
+            if isBleeding then
+                return true
+            end
+        end,
+        onSelect = function(data)
+            curePlayer(data.entity, 'bleed', bleedAnim)
+        end
+    },
 }
 
 local optionNames = { 'ox:option1', 'ox:option2' }

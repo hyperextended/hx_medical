@@ -1,5 +1,4 @@
 PlayerIsUnconscious = false
-LocalPlayer.state:set('unconscious', false, true)
 local timer = 0
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
@@ -8,6 +7,9 @@ local anims = {
 }
 
 local function resetUnconscious()
+    if lib.progressActive() then
+        lib.cancelProgress()
+    end
     SetPedCanRagdoll(cache.ped, true)
     PlayerIsUnconscious = false
     LocalPlayer.state:set('unconscious', false, true)
@@ -17,7 +19,7 @@ local function resetUnconscious()
     exports.scully_emotemenu:ResetExpression()
     exports.scully_emotemenu:ToggleLimitation(false)
     timer = 0
-    TriggerServerEvent('medical:changeStatus', 'unconscious', 0, 'set')
+    PlayerIsUnconscious = false
 end
 
 local function playUnconsciousAnimation()
@@ -63,13 +65,13 @@ local function knockout(timer)
             duration = timer * 1000,
             label = 'unconscious',
             useWhileDead = true,
-            allowRagDoll = true,
+            allowRagdoll = true,
             allowCuffed = true,
             allowFalling = true,
             canCancel = false,
         })
         then
-            resetUnconscious()
+            TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
         end
     end
 end

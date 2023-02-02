@@ -30,14 +30,14 @@ client_scripts {
     'client/hospital.lua',
     'client/wounding.lua',
     'client/statuses/*.lua',
-    'client/target/*.lua',
+    'client/target/target.lua',
 }
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     '@ox_core/imports/server.lua',
     'server/main.lua',
-    'server/target/smellingsalt.lua'
+    'server/target/target.lua'
 }
 
 server_export ''

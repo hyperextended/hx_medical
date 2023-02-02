@@ -7,6 +7,8 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
+playerState = LocalPlayer.state
+
 SetEntityMaxHealth(cache.ped, 200)
 SetEntityHealth(cache.ped, 200)
 
@@ -54,15 +56,12 @@ function LoadAnimations()
         lib.requestAnimDict(anims[i][1])
     end
 end
-
 local function waitForRagdoll()
-    SetPedCanRagdoll(cache.ped, true)
     local timer = 0
     while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
         timer = timer + 1
         Wait(200)
         if timer > 20 then
-            -- SetPedToRagdoll(cache.ped, 1500, 2500, 0, true, true, true)
             SetPedCanRagdoll(cache.ped, false)
             return
         end
@@ -72,7 +71,8 @@ end
 local function playDeathAnimation()
     if PlayerIsDead then
         local anim = cache.vehicle and anims[2] or anims[1]
-        if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
+        local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
+        if not isInAnim then
             TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
         end
     else
@@ -111,11 +111,11 @@ local function checkForRespawn()
             })
             then
                 lib.hideTextUI()
-                TriggerServerEvent('medical:revive')
-                repeat
+--[[                 repeat
                     Wait(100)
-                until not canRespawn
+                until not canRespawn ]]
                 hospitalBed()
+                TriggerServerEvent('medical:revive')
                 return
             else
                 controlPressed = false
@@ -136,6 +136,9 @@ local function setDead()
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:SetExpression('dead_1')
+    if lib.progressActive() then
+        lib.cancelProgress()
+    end
 end
 
 local function death()
@@ -167,15 +170,8 @@ local function startDeathLoop()
     end)
 end
 
-local function HpRegen()
-    if GetConvarInt('medical:HealthRecharge', 1) == 0 then
-        SetPlayerHealthRechargeMultiplier(cache.ped, 0.0)
-    end
-end
-
 AddEventHandler('ox:playerLoaded', function(data)
     PlayerIsLoaded = true
-    HpRegen()
     startDeathLoop()
 end)
 
@@ -188,7 +184,6 @@ end)
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == cache.resource and cache.ped then
         PlayerIsLoaded = true
-        HpRegen()
         startDeathLoop()
     end
 end)
