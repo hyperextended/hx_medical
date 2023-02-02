@@ -3,7 +3,6 @@ InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
 PlayerInBed = nil
 local cam
-local playerState = LocalPlayer.state
 
 local prison = lib.points.new(vec3(1691.02, 2601.022, 45.564), 190)
 

@@ -7,6 +7,8 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
+playerState = LocalPlayer.state
+
 SetEntityMaxHealth(cache.ped, 200)
 SetEntityHealth(cache.ped, 200)
 
