@@ -38,7 +38,7 @@ local function revive()
 end
 
 local function initializeVariables()
-    RespawnTimer = GetConvarInt('medical:deathTimer', 60)
+    RespawnTimer = GetConvarInt('medical:deathTimer', 5)
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
 end
@@ -113,11 +113,11 @@ local function checkForRespawn()
             })
             then
                 lib.hideTextUI()
-                TriggerServerEvent('medical:revive')
-                repeat
+--[[                 repeat
                     Wait(100)
-                until not canRespawn
+                until not canRespawn ]]
                 hospitalBed()
+                TriggerServerEvent('medical:revive')
                 return
             else
                 controlPressed = false
