@@ -38,7 +38,6 @@ end
 
 local function findBed(beds)
     for i = 1, #beds do
-        local bed = beds[i]
         if not beds[i].taken then
             return i
         end
