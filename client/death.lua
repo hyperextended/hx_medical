@@ -38,7 +38,7 @@ local function revive()
 end
 
 local function initializeVariables()
-    RespawnTimer = GetConvarInt('medical:deathTimer', 5)
+    RespawnTimer = GetConvarInt('medical:deathTimer', 60)
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
 end
