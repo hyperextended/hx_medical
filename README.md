@@ -13,6 +13,7 @@ This script handles:
 2. Player death and respawning using player state.
 3. Usage of Pillbox (default configured to [AshiroDev's hospital map](https://forum.cfx.re/t/interior-map-pillbox-medical-center-top-floor/949788)) for self-serve care.
 
+Many lines of code have been borrowed from [qbox-ambulancejob](https://github.com/Qbox-project/qb-ambulancejob) and their efforts have saved us a significant amount of work and time. Thanks guys.
 ## Contributions
 
 Please open an issue prior to spending time coding any major changes to avoid wasting your time.
@@ -72,5 +73,5 @@ INSERT INTO `ox_statuses` (`name`, `ontick`) VALUES ('bleed', 0);
 
 ## Authors
 
-- [@tclrd](https://www.github.com/tclrd)
-- [@sumndaiy](https://github.com/sumndaiy)
+- [tclrd](https://www.github.com/tclrd)
+- [sumndaiy](https://github.com/sumndaiy)
