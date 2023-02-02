@@ -7,6 +7,8 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
+playerState = LocalPlayer.state
+
 SetEntityMaxHealth(cache.ped, 200)
 SetEntityHealth(cache.ped, 200)
 
@@ -36,7 +38,7 @@ local function revive()
 end
 
 local function initializeVariables()
-    RespawnTimer = GetConvarInt('medical:deathTimer', 60)
+    RespawnTimer = GetConvarInt('medical:deathTimer', 5)
     PlayerIsUnconscious = false
     PlayerIsStaggered = false
 end
@@ -81,11 +83,9 @@ end
 local function countdownRespawnTimer()
     print("starting timer")
     while RespawnTimer > 0 and PlayerIsDead do
-        print('death timer tick')
         playDeathAnimation()
         lib.showTextUI(('Respawn in %s'):format(RespawnTimer))
         RespawnTimer -= 1
-        print(RespawnTimer)
         Wait(1000)
         lib.hideTextUI()
         if not PlayerIsDead then RespawnTimer = 0 return end
@@ -111,10 +111,14 @@ local function checkForRespawn()
             })
             then
                 lib.hideTextUI()
+--[[                 repeat
+                    Wait(100)
+                until not canRespawn ]]
+                hospitalBed()
                 TriggerServerEvent('medical:revive')
                 return
             else
-                controlPressed = fales
+                controlPressed = false
             end
         end
     end
