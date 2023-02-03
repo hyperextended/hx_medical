@@ -74,6 +74,7 @@ local function handleDamage(weapon, bone, damageTaken)
     if damageTaken < 1 then return end
 
     local weaponData = Data.WeaponsTable[weapon]
+    -- possible check needed if WeaponData nil
     local boneName = Data.Bones[bone]
     local isArmored = checkArmor(cache.ped, boneName)
     if not weaponData.statuses then return else

@@ -1,0 +1,9 @@
+{
+    "respawn_timer": "Respawn in %s",
+    "respawn_button": "[E] - Respawn",
+    "target": "Use %s",
+    "using": "Using %s",
+    "notify_title": "Medical",
+    "bleeding": "You're bleeding!",
+    "unconscious": "You've fainted!"
+}

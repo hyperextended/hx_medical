@@ -22,13 +22,18 @@ local function bleed()
         print(desaturation)
         blurCounter += 1
         if blurCounter >= 5 then blurScreen() blurCounter = 0 end
-        SetTimecycleModifier("rply_saturation_neg") -- might not needed if notification is not stuck on screen
-        SetTimecycleModifierStrength(desaturation) -- might crash the game idk need more test
-        -- SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
+        SetTimecycleModifier("rply_saturation_neg")
+        SetTimecycleModifierStrength(desaturation)
         ApplyDamageToPed(cache.ped, tickDamage, false)
-        ApplyPedBlood(cache.ped, 0, math.random(0, 4) + 0.0, math.random(-0, 4) + 0.0, math.random(-0, 4) + 0.0,
-            'wound_sheet')
+        ApplyPedBlood(cache.ped, 0, math.random(0, 4) + 0.0, math.random(-0, 4) + 0.0, math.random(-0, 4) + 0.0,'wound_sheet')
         Wait(tickTime)
+        lib.notify({
+            id = "medical_playerbleed",
+            title = locale('notify_title'),
+            duration = tickTime,
+            description = locale('bleeding'),
+            type = 'error'
+        })
     end
 end
 
@@ -37,32 +42,23 @@ AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.bleed then return end
     if not PlayerIsBleeding and statuses.bleed > 25 then
         PlayerIsBleeding = true
-        playerState:set('bleeding', true, true)
+        playerState:set('bleed', true, true)
         intensity = statuses.bleed
         lib.notify({
-            title = 'Status',
+            title = locale('notify_title'),
             duration = 3000,
-            description = 'You are bleeding!',
+            description = locale('bleeding'),
             type = 'error'
         })
         bleed()
     elseif PlayerIsBleeding and statuses.bleed == 0 then
         PlayerIsBleeding = false
-        playerState:set('bleeding', false, true)
+        playerState:set('bleed', false, true)
         intensity = 0
         SetTimecycleModifierStrength(0)
         ClearTimecycleModifier()
     end
     intensity = statuses.bleed
-    if PlayerIsBleeding then
-      lib.notify({
-            id = "medical_playerbleed",
-            title = 'Medical',
-            duration = 1000,
-            description = 'You are bleeding!',
-            type = 'error'
-        })
-    end
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then

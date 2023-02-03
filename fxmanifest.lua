@@ -7,6 +7,10 @@ lua54 'yes'
 description 'medical system for ox_core'
 version '0.0.1'
 
+files {
+    'locales/*.json'
+  }
+
 dependencies {
     "/onesync",
     "ox_core",

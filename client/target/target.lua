@@ -1,17 +1,22 @@
--- To use smelling_salt go to your server.cfg and do setr medical:smellingsalt 1
-if GetConvarInt('medical:smellingsalt', 0) ~= 1 then return end
+-- To use targeting go to your server.cfg and do setr medical:targeting 1
+if GetConvarInt('medical:targeting', 0) ~= 1 then return end
+
+local labels = {}
+for _, v in pairs(exports.ox_inventory:Items()) do
+    labels[v.name] = v.label
+end
 
 local saltAnim = {"amb@world_human_bum_wash@male@low@idle_a", "idle_a"}
 local bleedAnim = {"amb@world_human_bum_wash@male@low@idle_a", "idle_a"}
 
-local function curePlayer(ped, cureType, animTable)
+local function curePlayer(ped, cureType, animTable, item)
     TaskTurnPedToFaceEntity(cache.ped, ped, -1)
     while not IsPedFacingPed(cache.ped, ped, 10) do
         Wait(200)
     end
     if lib.progressBar({
         duration = 2000,
-        label = 'Using Smelling Salt',
+        label = locale("using", item),
         useWhileDead = false,
         canCancel = true,
         disable = {
@@ -30,43 +35,42 @@ local function curePlayer(ped, cureType, animTable)
     end
 end
 
-local options = {
+local items = {
     {
-        name = "medical:smelling_salt",
-        icon = "fa-solid fa-handshake-angle",
-        label = "Use Smelling Salt",
-        distance = 1,
-        items = "smelling_salt",
-        canInteract = function(entity)
-            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-            local isUnconscious = Player(target).state.unconscious
-            if isUnconscious then
-                return true
-            end
-        end,
-        onSelect = function(data)
-            curePlayer(data.entity, 'unconscious', saltAnim)
-        end
+        name = "medical:stopBleed",
+        items = {"bandage", "medikit", "clothing"},
+        icon = "fa-solid fa-droplet",
+        cureType = "bleed",
+        animTable = bleedAnim
     },
     {
-        name = "medical:bleeding_stop",
-        icon = "fa-solid fa-handshake-angle",
-        label = "Use Bandage",
-        distance = 1,
-        items = "bandage",
-        canInteract = function(entity)
-            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
-            local isBleeding = Player(target).state.bleed
-            if isBleeding then
-                return true
-            end
-        end,
-        onSelect = function(data)
-            curePlayer(data.entity, 'bleed', bleedAnim)
-        end
-    },
+        name = "medical:stopUnconscious",
+        items = {"smelling_salt"},
+        icon = "fa-solid fa-icon",
+        cureType = "unconscious",
+        animTable = saltAnim
+    }
 }
 
-local optionNames = { 'ox:option1', 'ox:option2' }
-
-exports.ox_target:addGlobalPlayer(options)
+for index, value in ipairs(items) do
+    print(index, json.encode(value.item))
+    for i = 1, #value.items do
+        label = locale('target',labels[value.items[i]])
+        exports.ox_target:addGlobalPlayer({
+            {
+                name = value.name,
+                icon = value.icon,
+                label = label,
+                items = value.items[i],
+                canInteract = function (entity)
+                    local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+                    local needsCure = Player(target).state[value.cureType]
+                    if needsCure then return true end
+                end,
+                onSelect = function (data)
+                    curePlayer(data.entity, value.cureType, value.animTable, value.items[i])
+                end
+            }
+        }) 
+    end
+end

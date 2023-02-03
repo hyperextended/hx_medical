@@ -63,7 +63,7 @@ local function knockout(timer)
         Wait(500)
         if lib.progressCircle({
             duration = timer * 1000,
-            label = 'unconscious',
+            label = locale('unconscious'),
             useWhileDead = true,
             allowRagdoll = true,
             allowCuffed = true,
@@ -83,8 +83,8 @@ AddEventHandler('ox:statusTick', function(statuses)
             PlayerIsUnconscious = true
             LocalPlayer.state:set('unconscious', true, true)
             lib.notify({
-                title = 'Medical',
-                description = 'You are unconscious!',
+                title = locale('notify_title'),
+                description = locale('unconscious'),
                 type = 'error'
             })
             timer = statuses.unconscious

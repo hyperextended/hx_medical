@@ -6,6 +6,7 @@ local anims = {
     { 'veh@low@front_ps@idle_duck', 'sit' },
     { 'dead', 'dead_a' },
 }
+lib.locale()
 
 playerState = LocalPlayer.state
 
@@ -84,7 +85,7 @@ local function countdownRespawnTimer()
     print("starting timer")
     while RespawnTimer > 0 and PlayerIsDead do
         playDeathAnimation()
-        lib.showTextUI(('Respawn in %s'):format(RespawnTimer))
+        lib.showTextUI(locale('respawn_timer', RespawnTimer))
         RespawnTimer -= 1
         Wait(1000)
         lib.hideTextUI()
@@ -93,7 +94,7 @@ local function countdownRespawnTimer()
 end
 
 local function checkForRespawn()
-    lib.showTextUI('[E] - Respawn')
+    lib.showTextUI(locale('respawn_button'))
     canRespawn = true
     while canRespawn do
         Wait(0)

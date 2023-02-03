@@ -14,6 +14,8 @@
 -- Blackout
 -- vision /audio fade out
 
+-- Is this needed?
+
 RegisterCommand('getexp', function(source, args, rawCommand)
     local expression = exports.scully_emotemenu:GetCurrentExpression()
     print(expression)
