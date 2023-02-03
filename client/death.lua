@@ -193,7 +193,6 @@ AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, 
     if value == true then
         PlayerIsDead = true
         TriggerServerEvent('ox:playerDeath', true)
-        print('triggering death')
         death()
     else
         PlayerIsDead = false
