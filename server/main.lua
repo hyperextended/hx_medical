@@ -16,6 +16,40 @@ RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     end
 end)
 
+local function findBed(beds)
+    for i = 1, #beds do
+        if not beds[i].taken then
+            return i
+        end
+    end
+end
+
+local function inPrison(serverId)
+    local player = Ox.GetPlayer(serverId)
+    if player.getState(self).prison then return true else return false end
+end
+
+lib.callback.register('medical:getBed', function()
+    local player = Ox.GetPlayer(source)
+    local beds = Data.locations.beds
+    if inPrison(source) then beds = Data.locations.jailbeds end
+    local index = findBed(beds)
+    player.getState(self):set('bedIndex', index, true)
+    beds[index].taken = true
+    print(json.encode(beds, { indent = true }))
+    return beds[index], index
+end)
+
+RegisterNetEvent('medical:releaseBed', function(index)
+    if not index then return end
+    local player = Ox.GetPlayer(source)
+    local beds = Data.locations.beds
+    if inPrison(source) then beds = Data.locations.jailbeds end
+    beds[index].taken = false
+    player.getState(self):set('bedIndex', nil, true)
+    print(beds[index].taken)
+end)
+
 AddEventHandler('ox:playerLoaded', function(source, userid, charid)
     local player = Ox.GetPlayer(source)
 end)
@@ -31,16 +65,16 @@ RegisterNetEvent('medical:heal', function(amount, target)
     TriggerClientEvent('medical:heal', target or source, amount or 200)
 end)
 
-lib.addCommand('group.admin', { 'heal' }, function(source, args)
+lib.addCommand('builtin.everyone', { 'heal' }, function(source, args)
     print(('healing %s for %s'):format(args.target, args.amount))
     TriggerClientEvent('medical:heal', args.target or source, args.amount or 100)
 end, { 'amount:?number', 'target:?number' })
 
-lib.addCommand('group.admin', { 'revive' }, function(source, args)
+lib.addCommand('builtin.everyone', { 'revive' }, function(source, args)
     TriggerEvent('medical:revive', args.target or source)
 end, { 'target:?number' })
 
-lib.addCommand('group.admin', { 'kill' }, function(source, args)
+lib.addCommand('builtin.everyone', { 'kill' }, function(source, args)
     local player = Ox.GetPlayer(args.target or source)
     if not player then return end
     local playerState = player.getState()
@@ -48,7 +82,7 @@ lib.addCommand('group.admin', { 'kill' }, function(source, args)
 end, { 'target:?number' })
 
 
-lib.addCommand('group.admin', { 'setStatus' }, function(source, args)
+lib.addCommand('builtin.everyone', { 'setStatus' }, function(source, args)
     if args.status == nil then return end
     local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
     local player = Ox.GetPlayer(source)

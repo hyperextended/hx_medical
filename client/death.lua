@@ -7,10 +7,16 @@ local anims = {
     { 'dead', 'dead_a' },
 }
 
-playerState = LocalPlayer.state
-
 SetEntityMaxHealth(cache.ped, 200)
 SetEntityHealth(cache.ped, 200)
+
+local function dropInventory()
+    if GetConvarInt('medical:wipeInventory', 'false') == 'true' then
+        -- TODO:dump inventory at location
+        local playerItems = exports.ox_inventory:GetInventoryItems(source)
+        print(json.encode(playerItems, { indent = true }))
+    end
+end
 
 local function revive()
     if not PlayerIsDead then
@@ -28,7 +34,8 @@ local function revive()
         end
         EnableAllControlActions(0)
         SetEveryoneIgnorePlayer(cache.playerId, false)
-        SetEntityInvincible(cache.ped, false)
+        SetEntityInvincible(PlayerPedId(), false)
+        SetPlayerInvincible(PlayerPedId(), false)
         exports.scully_emotemenu:ToggleLimitation(false)
         canRespawn = false
         SetPedCanRagdoll(cache.ped, true)
@@ -56,6 +63,7 @@ function LoadAnimations()
         lib.requestAnimDict(anims[i][1])
     end
 end
+
 local function waitForRagdoll()
     local timer = 0
     while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
@@ -111,7 +119,7 @@ local function checkForRespawn()
             })
             then
                 lib.hideTextUI()
---[[                 repeat
+                --[[                 repeat
                     Wait(100)
                 until not canRespawn ]]
                 hospitalBed()
@@ -127,6 +135,8 @@ end
 local function setDead()
     local coords = GetEntityCoords(cache.ped)
     NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, GetEntityHeading(cache.ped), false, false)
+    SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
+    SetEntityInvincible(PlayerPedId(), true)
     SetEntityMaxHealth(cache.ped, 100)
     SetEntityHealth(cache.ped, 100)
 
@@ -143,15 +153,15 @@ end
 
 local function death()
     initializeVariables()
-    exports.scully_emotemenu:ToggleLimitation(true)
-    SetEntityInvincible(cache.ped, true)
     resetStatus()
+    exports.scully_emotemenu:ToggleLimitation(true)
+    SetPlayerInvincible(cache.playerId, true)
     LoadAnimations()
     waitForRagdoll()
     setDead()
     countdownRespawnTimer()
     Citizen.CreateThread(function()
-        while PlayerIsDead and not canRespawn do playDeathAnimation() Wait(0) end
+        while PlayerIsDead and playerState.bedIndex == nil do playDeathAnimation() Wait(0) end
     end)
     Citizen.CreateThread(function()
         checkForRespawn()

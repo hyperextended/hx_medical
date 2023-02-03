@@ -1,47 +1,15 @@
 PlayerInPrison = false
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
-PlayerInBed = nil
-local cam
 
 local prison = lib.points.new(vec3(1691.02, 2601.022, 45.564), 190)
 
 function prison:nearby()
-    if not playerState.prison then
-        playerState:set('prison', true, true)
-    end
+    if not playerState.prison then playerState:set('prison', true, true) end
 end
 
 function prison:onExit()
-    if playerState.prison then
-        playerState:set('prison', false, true)
-    end
-end
-
-AddStateBagChangeHandler('prison', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
-    if value == playerState.prison then return end
-    if value == true then
-        PlayerInPrison = true
-    else
-        PlayerInPrison = false
-    end
-end)
-
-local function getBedType()
-    if not playerState.prison then
-        return Data.locations.beds
-    else
-        return Data.locations.jailbeds
-    end
-
-end
-
-local function findBed(beds)
-    for i = 1, #beds do
-        if not beds[i].taken then
-            return i
-        end
-    end
+    if playerState.prison then playerState:set('prison', false, true) end
 end
 
 local function countdownBedTimer()
@@ -65,12 +33,10 @@ local function leaveBed(bed)
     TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
     Wait(4000)
     ClearPedTasks(ped)
-    -- TriggerServerEvent('hospital:server:LeaveBed', BedOccupying)
     local bedObject = GetClosestObjectOfType(bed.coords.x, bed.coords.y, bed.coords.z,
         1.0, bed.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
-    RenderScriptCams(false, true, 200, true, true)
-    DestroyCam(cam, false)
+    TriggerServerEvent('medical:releaseBed')
 end
 
 local function wakeUpListener(bed)
@@ -104,7 +70,6 @@ end
 
 local function keepInBed(bed)
     IsInHospitalBed = true
-    PlayerInBed = bed
     CanLeaveBed = false
     local player = cache.ped
     if IsPedDeadOrDying(player) then
@@ -120,55 +85,44 @@ local function keepInBed(bed)
     lib.requestAnimDict(InBedDict)
     TaskPlayAnim(player, InBedDict, InBedAnim, 8.0, 1.0, -1, 1, 0, false, false, false)
     SetEntityHeading(player, bed.coords.w)
-    cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
-    SetCamActive(cam, true)
-    RenderScriptCams(true, false, 1, true, true)
-    AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0, true)
-    SetCamFov(cam, 90.0)
     local heading = GetEntityHeading(player)
     heading = (heading > 180) and heading - 180 or heading + 180
-    SetCamRot(cam, -45.0, 0.0, heading, 2)
     DoScreenFadeIn(1000)
     Wait(1000)
     FreezeEntityPosition(player, true)
-
     countdownBedTimer()
     wakeUpListener(bed)
 end
 
 local function teleportBed(coords)
     DoScreenFadeOut(1000)
-
-    while not IsScreenFadedOut() do
-        Wait(100)
-    end
+    while not IsScreenFadedOut() do Wait(100) end
     SetEntityCoords(cache.ped, coords.x, coords.y, coords.z)
     SetEntityHeading(cache.ped, coords.w)
 end
 
-local currentBed = nil
 function hospitalBed()
-    local beds = getBedType()
-    local index = findBed(beds)
-    if beds[index] then
-        currentBed = beds[index]
-        Data.locations.beds[index].taken = true
-        teleportBed(currentBed.coords)
-        keepInBed(currentBed)
+    local bed = lib.callback.await('medical:getBed', false)
+    if bed ~= nil then
+        teleportBed(bed.coords)
+        keepInBed(bed)
     end
 end
 
-RegisterCommand('findbed', function()
-    hospitalBed()
-end)
+-- RegisterCommand('findbed', function()
+--     local bed, index = lib.callback.await('medical:getBed', false)
+--     print(json.encode(bed), index, LocalPlayer.state.bedIndex)
+--     Wait(2500)
+--     print(LocalPlayer.state.bedIndex)
+--     -- TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
+-- end)
 
-RegisterCommand('wakeup', function()
-    if currentBed ~= nil then leaveBed(currentBed) else
-        lib.notify({
-            title = 'Hospital',
-            duration = 3000,
-            description = 'You are not in a bed!',
-            type = 'error'
-        })
-    end
+-- RegisterCommand('releasebed', function()
+--     TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
+--     Wait(1000)
+--     print(LocalPlayer.state.bedIndex)
+-- end)
+
+AddEventHandler('ox:playerLogout', function()
+    TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
 end)
