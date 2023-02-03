@@ -1,0 +1,9 @@
+{
+    "respawn_timer": "Wiederbeleben in %s",
+    "respawn_button": "[E] - Wiederbeleben",
+    "target": "Verwenden %s",
+    "using": "Verwenden von %s",
+    "notify_title": "Medizinisch",
+    "bleeding": "Du blutest!",
+    "unconscious": "Du bist bewusstlos!"
+}

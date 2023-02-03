@@ -1,0 +1,9 @@
+{
+    "respawn_timer": "Reaparecer en %s",
+    "respawn_button": "[E] - Reaparecer",
+    "target": "Usar %s",
+    "using": "Usando %s",
+    "notify_title": "Médico",
+    "bleeding": "Estás sangrando!",
+    "unconscious": "Has perdido el conocimiento!"
+}
