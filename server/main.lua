@@ -16,6 +16,40 @@ RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     end
 end)
 
+local function findBed(beds)
+    for i = 1, #beds do
+        if not beds[i].taken then
+            return i
+        end
+    end
+end
+
+local function inPrison(serverId)
+    local player = Ox.GetPlayer(serverId)
+    if player.getState(self).prison then return true else return false end
+end
+
+lib.callback.register('medical:getBed', function()
+    local player = Ox.GetPlayer(source)
+    local beds = Data.locations.beds
+    if inPrison(source) then beds = Data.locations.jailbeds end
+    local index = findBed(beds)
+    player.getState(self):set('bedIndex', index, true)
+    beds[index].taken = true
+    print(json.encode(beds, { indent = true }))
+    return beds[index], index
+end)
+
+RegisterNetEvent('medical:releaseBed', function(index)
+    if not index then return end
+    local player = Ox.GetPlayer(source)
+    local beds = Data.locations.beds
+    if inPrison(source) then beds = Data.locations.jailbeds end
+    beds[index].taken = false
+    player.getState(self):set('bedIndex', nil, true)
+    print(beds[index].taken)
+end)
+
 AddEventHandler('ox:playerLoaded', function(source, userid, charid)
     local player = Ox.GetPlayer(source)
 end)
@@ -48,7 +82,7 @@ lib.addCommand('group.admin', { 'kill' }, function(source, args)
 end, { 'target:?number' })
 
 
-lib.addCommand('group.admin', { 'setStatus' }, function(source, args)
+lib.addCommand('group.admin', { 'setstatus' }, function(source, args)
     if args.status == nil then return end
     local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
     local player = Ox.GetPlayer(source)
