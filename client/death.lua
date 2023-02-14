@@ -1,12 +1,11 @@
+lib.locale()
 local canRespawn = false
 local RespawnTimer = 0
-local timerRunning = false
 local anims = {
     { 'missfinale_c1@', 'lying_dead_player0' },
     { 'veh@low@front_ps@idle_duck', 'sit' },
     { 'dead', 'dead_a' },
 }
-lib.locale()
 
 SetEntityMaxHealth(cache.ped, 200)
 SetEntityHealth(cache.ped, 200)
@@ -21,22 +20,29 @@ end
 
 local function revive()
     if not PlayerIsDead then
-        Wait(30) -- resolve issue with hud updating correctly
+        Wait(30) -- resolves an issue with hud updating incorrectly
+
         if lib.progressActive() then
             lib.cancelProgress()
         end
+
         SetEntityMaxHealth(cache.ped, 200)
         SetEntityHealth(cache.ped, 200)
+
         RespawnTimer = 0
         ClearPedTasks(cache.ped)
         ClearPedBloodDamage(cache.ped)
+        
         if cache.vehicle then
             SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
         end
+
         EnableAllControlActions(0)
+
         SetEveryoneIgnorePlayer(cache.playerId, false)
         SetEntityInvincible(PlayerPedId(), false)
         SetPlayerInvincible(PlayerPedId(), false)
+
         exports.scully_emotemenu:ToggleLimitation(false)
         canRespawn = false
         SetPedCanRagdoll(cache.ped, true)
@@ -53,6 +59,7 @@ end
 
 local function resetStatus()
     local statuses = { 'hunger', 'thirst', 'stagger', 'unconscious', 'bleed', 'stress' }
+
     for i = 1, #statuses do
         print(statuses[i])
         TriggerServerEvent('medical:changeStatus', statuses[i], 0)
@@ -67,6 +74,7 @@ end
 
 local function waitForRagdoll()
     local timer = 0
+
     while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
         timer = timer + 1
         Wait(200)
@@ -81,6 +89,7 @@ local function playDeathAnimation()
     if PlayerIsDead then
         local anim = cache.vehicle and anims[2] or anims[1]
         local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
+        
         if not isInAnim then
             TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
         end
@@ -90,13 +99,15 @@ local function playDeathAnimation()
 end
 
 local function countdownRespawnTimer()
-    print("starting timer")
     while RespawnTimer > 0 and PlayerIsDead do
         playDeathAnimation()
         lib.showTextUI(locale('respawn_timer', RespawnTimer))
+
         RespawnTimer -= 1
         Wait(1000)
+
         lib.hideTextUI()
+
         if not PlayerIsDead then RespawnTimer = 0 return end
     end
 end
@@ -104,13 +115,17 @@ end
 local function checkForRespawn()
     lib.showTextUI(locale('respawn_button'))
     canRespawn = true
+
     while canRespawn do
         Wait(0)
+
         if not PlayerIsDead then
             lib.hideTextUI()
             return
         end
+
         if IsControlJustReleased(2, 51) and not lib.progressActive() then
+
             if lib.progressCircle({
                 duration = 2000,
                 position = 'bottom',
@@ -120,9 +135,6 @@ local function checkForRespawn()
             })
             then
                 lib.hideTextUI()
-                --[[                 repeat
-                    Wait(100)
-                until not canRespawn ]]
                 hospitalBed()
                 TriggerServerEvent('medical:revive')
                 return
@@ -136,6 +148,7 @@ end
 local function setDead()
     local coords = GetEntityCoords(cache.ped)
     NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, GetEntityHeading(cache.ped), false, false)
+
     SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
     SetEntityInvincible(PlayerPedId(), true)
     SetEntityMaxHealth(cache.ped, 100)
@@ -144,9 +157,11 @@ local function setDead()
     if cache.vehicle then
         SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
     end
+
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:SetExpression('dead_1')
+
     if lib.progressActive() then
         lib.cancelProgress()
     end
@@ -174,6 +189,7 @@ local function startDeathLoop()
         while PlayerIsLoaded do
             Wait(100)
             cache.ped = PlayerPedId()
+
             if not PlayerIsDead and IsPedDeadOrDying(cache.ped, true) then
                 playerState:set('dead', true, true)
             end
@@ -201,6 +217,7 @@ end)
 
 AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
     if value == playerState.dead then return end
+
     if value == true then
         PlayerIsDead = true
         TriggerServerEvent('ox:playerDeath', true)
@@ -213,8 +230,8 @@ AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, 
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
-
     local ShowStatus = false
+    
     AddEventHandler('ox:statusTick', function(statuses)
         if ShowStatus then
             print(json.encode(statuses, { indent = true }))
