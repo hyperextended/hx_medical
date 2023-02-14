@@ -41,7 +41,6 @@ local function revive()
         SetPedCanRagdoll(cache.ped, true)
         exports.scully_emotemenu:ResetExpression()
     end
-
 end
 
 local function initializeVariables()
