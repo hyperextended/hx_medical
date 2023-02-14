@@ -1,11 +1,13 @@
+playerState = LocalPlayer.state
 PlayerIsLoaded = false
 PlayerIsDead = false
 PlayerCanRespawn = false
---CauseOfDeath = nil I CANT WAIT TO WORK ON THIS :))))) (huge irony thanks)
-playerState = LocalPlayer.state
+--@TODO Save CauseOfDeath
+--CauseOfDeath = nil
 
 local function SyncHealth()
     CurrentHealth = GetEntityHealth(cache.ped)
+
     if CurrentHealth ~= PreviousHealth then
         PreviousHealth = CurrentHealth
     end
@@ -36,7 +38,9 @@ end
 local function checkArmor(ped, bone)
     if GetPedArmour(ped) > 0 then
         return Data.ArmoredBones[bone] and true
-    else return false end
+    else
+        return false
+    end
 end
 
 local function applyBleed(multi, damage, isArmored)
@@ -57,6 +61,7 @@ local function applyStagger(multi, damage, isArmored, bone)
     if isArmored then
         multi = multi / 10
     end
+
     if not lib.table.contains(Data.StaggerAreas, bone) then return else
         addStatus('stagger', damage * multi)
     end
@@ -70,6 +75,7 @@ Data.ApplyStatus = {
 
 local function handleDamage(weapon, bone, damageTaken)
     if not (weapon or bone or damageTaken) then return end
+
     if damageTaken < 1 then return end
 
     local weaponData = Data.WeaponsTable[weapon]
@@ -79,9 +85,11 @@ local function handleDamage(weapon, bone, damageTaken)
     if not weaponData.statuses then return else
         local statuses = weaponData.statuses
         for k, v in pairs(statuses) do
+
             if GetConvarInt('medical:debug', 0) == 1 then
                 print("Multi:", v, "DamageTaken", damageTaken, "isArmored", isArmored, "bone: ", boneName, "status", k)
             end
+
             Data.ApplyStatus[k](v, damageTaken, isArmored, boneName)
         end
     end
@@ -91,12 +99,13 @@ RegisterNetEvent('medical:heal', function(amount)
     SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + amount)
 end)
 
-
-
 AddEventHandler('gameEventTriggered', function(event, data)
     if event ~= "CEventNetworkEntityDamage" then return end
+
     local victim, attacker, fatal, weapon = data[1], data[2], data[4], data[7]
+
     if victim ~= cache.ped then return end
+
     local damageTaken = DamageTaken()
 
     SyncHealth()
@@ -116,6 +125,7 @@ if GetConvarInt('medical:debug', 0) == 1 then
                 class = Data.Weapons[name]
             }
         end
+        
         lib.setClipboard(json.encode(weaponTable, { indent = true }))
     end)
 end
