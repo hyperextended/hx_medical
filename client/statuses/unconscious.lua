@@ -10,6 +10,7 @@ local function resetUnconscious()
     if lib.progressActive() then
         lib.cancelProgress()
     end
+
     SetPedCanRagdoll(cache.ped, true)
     PlayerIsUnconscious = false
     LocalPlayer.state:set('unconscious', false, true)
@@ -24,26 +25,15 @@ end
 
 local function playUnconsciousAnimation()
     local anim = cache.vehicle and anims[2] or anims[1]
+
     if not IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3) then
         TaskPlayAnim(cache.ped, anim[1], anim[2], 50.0, 8.0, -1, 1, 1.0, false, false, false)
     end
 end
 
-local function countdownUnconsciousTimer(timer)
-    print(timer)
-    while timer > 0 and PlayerIsUnconscious do
-        playUnconsciousAnimation()
-        lib.showTextUI(('Unconscious - %s'):format(timer))
-        timer = timer - 1
-        Wait(1000)
-        lib.hideTextUI()
-        if not PlayerIsDead or not PlayerIsUnconscious then resetUnconscious() return end
-    end
-    return true
-end
-
 local function knockout(timer)
     if PlayerIsDead then return end
+
     if PlayerIsUnconscious then
         CreateThread(function()
             SetPedCanRagdoll(cache.ped, false)
@@ -51,9 +41,11 @@ local function knockout(timer)
             exports.scully_emotemenu:ToggleLimitation(true)
             exports.scully_emotemenu:SetExpression('dead_1')
             LoadAnimations()
+
             if IsPedRagdoll(cache.ped) then
                 ClearPedTasksImmediately(cache.ped)
             end
+
             while not PlayerIsDead and PlayerIsUnconscious do
                 playUnconsciousAnimation()
                 Wait(100)
@@ -61,6 +53,7 @@ local function knockout(timer)
         end)
 
         Wait(500)
+
         if lib.progressCircle({
             duration = timer * 1000,
             label = locale('unconscious'),
@@ -78,6 +71,7 @@ end
 
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.unconscious then return end
+    
     if not PlayerIsUnconscious then
         if statuses.unconscious > 5 then
             PlayerIsUnconscious = true
