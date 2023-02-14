@@ -45,7 +45,7 @@ end
 local function knockout(timer)
     if PlayerIsDead then return end
     if PlayerIsUnconscious then
-        Citizen.CreateThread(function()
+        CreateThread(function()
             SetPedCanRagdoll(cache.ped, false)
             DisableAllControlActions(0)
             exports.scully_emotemenu:ToggleLimitation(true)

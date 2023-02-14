@@ -161,16 +161,16 @@ local function death()
     waitForRagdoll()
     setDead()
     countdownRespawnTimer()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while PlayerIsDead and playerState.bedIndex == nil do playDeathAnimation() Wait(0) end
     end)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         checkForRespawn()
     end)
 end
 
 local function startDeathLoop()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while PlayerIsLoaded do
             Wait(100)
             cache.ped = PlayerPedId()

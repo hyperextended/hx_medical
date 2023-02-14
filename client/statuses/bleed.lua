@@ -3,7 +3,7 @@ local intensity = 0
 local blurCounter = 0
 
 local function blurScreen()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         TriggerScreenblurFadeIn(1000.0)
         Wait(1000 * (intensity / 10))
         TriggerScreenblurFadeOut(1000.0)
@@ -13,9 +13,9 @@ end
 local function bleed()
     local desaturation = 0
     while PlayerIsBleeding and not PlayerIsDead do
+        
         if PlayerIsDead then return end
-        local coords = GetEntityCoords(cache.ped)
-        local forwardVector = GetEntityForwardVector(cache.ped)
+
         local tickTime = (110 - intensity) * 100
         local tickDamage = 1
         if desaturation <= 0.80 then desaturation += 0.02 end
