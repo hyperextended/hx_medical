@@ -52,12 +52,12 @@ local function wakeUpListener(bed)
         end
         if IsControlJustReleased(2, 51) and not lib.progressActive() then
             if lib.progressCircle({
-                duration = 2000,
-                position = 'bottom',
-                canCancel = true,
-                useWhileDead = true,
-                allowRagdoll = true,
-            })
+                    duration = 2000,
+                    position = 'bottom',
+                    canCancel = true,
+                    useWhileDead = true,
+                    allowRagdoll = true,
+                })
             then
                 canGetUp = false
                 lib.hideTextUI()
@@ -104,7 +104,7 @@ local function teleportBed(coords)
     SetEntityHeading(cache.ped, coords.w)
     FreezeEntityPosition(cache.ped, true)
     while not HasCollisionLoadedAroundEntity(cache.ped) do Wait(0) end
-	FreezeEntityPosition(cache.ped, false)
+    FreezeEntityPosition(cache.ped, false)
 end
 
 function hospitalBed()
@@ -115,15 +115,15 @@ function hospitalBed()
     end
 end
 
-RegisterNetEvent('medical:selfService', function(amount)
+RegisterNetEvent('medical:selfService', function()
     -- lib.requestAnimDict('code_human_wander_clipboard', 200)
     local isDead = playerState.dead
     local anim = {}
     if not isDead then
         anim = {
-                dict = 'missfam4',
-                clip = 'base',
-            }
+            dict = 'missfam4',
+            clip = 'base',
+        }
     end
 
     if lib.progressBar({
@@ -153,7 +153,7 @@ RegisterNetEvent('medical:selfService', function(amount)
                 -- print(statuses[i])
                 TriggerServerEvent('medical:changeStatus', statuses[i], 0)
             end
-            SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + amount)
+            SetEntityHealth(cache.ped, 200)
         else
             playerState:set('dead', false, true)
         end
@@ -164,11 +164,11 @@ RegisterNetEvent('medical:selfService', function(amount)
             type = 'error'
         })
     end
-    SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + amount)
+    SetEntityHealth(cache.ped, 200)
 end)
 
 exports.ox_target:addSphereZone({
-    coords = vec3(308.3,-595.985, 43.364),
+    coords = vec3(308.3, -595.985, 43.364),
     radius = 1.5,
     debug = false,
     options = {
