@@ -2,9 +2,9 @@ local canRespawn = false
 local RespawnTimer = 0
 local timerRunning = false
 local anims = {
-    { 'missfinale_c1@', 'lying_dead_player0' },
+    { 'missfinale_c1@',             'lying_dead_player0' },
     { 'veh@low@front_ps@idle_duck', 'sit' },
-    { 'dead', 'dead_a' },
+    { 'dead',                       'dead_a' },
 }
 
 local function dropInventory()
@@ -34,12 +34,11 @@ local function revive()
         SetEveryoneIgnorePlayer(cache.playerId, false)
         SetEntityInvincible(PlayerPedId(), false)
         SetPlayerInvincible(PlayerPedId(), false)
-        exports.scully_emotemenu:ToggleLimitation(false)
+        exports.scully_emotemenu:setLimitation(false)
         canRespawn = false
         SetPedCanRagdoll(cache.ped, true)
-        exports.scully_emotemenu:ResetExpression()
+        exports.scully_emotemenu:resetExpression()
     end
-
 end
 
 local function initializeVariables()
@@ -94,7 +93,10 @@ local function countdownRespawnTimer()
         RespawnTimer -= 1
         Wait(1000)
         lib.hideTextUI()
-        if not PlayerIsDead then RespawnTimer = 0 return end
+        if not PlayerIsDead then
+            RespawnTimer = 0
+            return
+        end
     end
 end
 
@@ -109,12 +111,12 @@ local function checkForRespawn()
         end
         if IsControlJustReleased(2, 51) and not lib.progressActive() then
             if lib.progressCircle({
-                duration = 2000,
-                position = 'bottom',
-                canCancel = true,
-                useWhileDead = true,
-                allowRagdoll = true,
-            })
+                    duration = 2000,
+                    position = 'bottom',
+                    canCancel = true,
+                    useWhileDead = true,
+                    allowRagdoll = true,
+                })
             then
                 lib.hideTextUI()
                 --[[                 repeat
@@ -143,7 +145,7 @@ local function setDead()
     end
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
-    exports.scully_emotemenu:SetExpression('dead_1')
+    exports.scully_emotemenu:setExpression('dead_1')
     Wait(1000)
     if lib.progressActive() then
         lib.cancelProgress()
@@ -153,14 +155,17 @@ end
 local function playerDeath()
     initializeVariables()
     resetStatuses()
-    exports.scully_emotemenu:ToggleLimitation(true)
+    exports.scully_emotemenu:setLimitation(true)
     SetPlayerInvincible(cache.playerId, true)
     LoadAnimations()
     waitForRagdoll()
     setDead()
     countdownRespawnTimer()
     CreateThread(function()
-        while PlayerIsDead and playerState.bedIndex == nil do playDeathAnimation() Wait(0) end
+        while PlayerIsDead and playerState.bedIndex == nil do
+            playDeathAnimation()
+            Wait(0)
+        end
     end)
     CreateThread(function()
         checkForRespawn()
@@ -208,7 +213,6 @@ AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, 
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
-
     local ShowStatus = false
     AddEventHandler('ox:statusTick', function(statuses)
         if ShowStatus then

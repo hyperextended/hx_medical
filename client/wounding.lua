@@ -15,11 +15,11 @@
 -- vision /audio fade out
 
 RegisterCommand('getexp', function(source, args, rawCommand)
-    local expression = exports.scully_emotemenu:GetCurrentExpression()
+    local expression = exports.scully_emotemenu:getCurrentExpression()
     print(expression)
 end)
 
 RegisterCommand('getwalk', function(source, args, rawCommand)
-    local walk = exports.scully_emotemenu:GetCurrentWalk()
+    local walk = exports.scully_emotemenu:getCurrentWalk()
     print(walk)
 end)
