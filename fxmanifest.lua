@@ -11,14 +11,12 @@ dependencies {
     "/onesync",
     "ox_core",
     "ox_lib",
+    "ox_inventory",
     "scully_emotemenu",
-    -- "ox_inventory",
 }
 
 shared_scripts {
     '@ox_lib/init.lua',
-    'locales/en.lua',
-    'locales/*.lua',
     'shared/data.lua',
     'shared/weapons.lua',
 }

@@ -5,7 +5,6 @@
 
 -- TODO: REPLACE UNSECURE EVENT WITH SERVER-SIDE LOGIC
 RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
-    -- print(status, value, changeType)
     local player = Ox.GetPlayer(source)
     if changeType == 'add' then
         player.addStatus(status, value)
@@ -36,18 +35,53 @@ lib.callback.register('medical:getBed', function()
     local index = findBed(beds)
     player.getState(self):set('bedIndex', index, true)
     beds[index].taken = true
-    print(json.encode(beds, { indent = true }))
+    -- print(json.encode(beds, { indent = true }))
     return beds[index], index
+end)
+
+lib.callback.register('medical:dropInventory', function(source, coords)
+    local victim = source
+    local victimCoords = coords
+    local weaponsOnly = GetConvarInt('medical:dropInventory', 0) == 2
+    local playerItems = exports.ox_inventory:GetInventoryItems(source)
+    local inventory = {}
+    if weaponsOnly then
+        for _, v in pairs(playerItems) do
+            if v.name:sub(0, 7) == 'WEAPON_' then
+                inventory[#inventory + 1] = {
+                    v.name,
+                    v.count,
+                    v.metadata
+                }
+                exports.ox_inventory:RemoveItem(victim, v.name, v.count, v.metadata)
+            end
+        end
+    else
+        for _, v in pairs(playerItems) do
+            inventory[#inventory + 1] = {
+                v.name,
+                v.count,
+                v.metadata
+            }
+        end
+    end
+    if #inventory > 0 then
+        exports.ox_inventory:CustomDrop('Dropped Items', inventory, victimCoords)
+    end
+    if not weaponsOnly then
+        exports.ox_inventory:ClearInventory(victim, false)
+    end
+    -- return dropId
 end)
 
 RegisterNetEvent('medical:releaseBed', function(index)
     if not index then return end
+    local playerState = Player(source).state
     local player = Ox.GetPlayer(source)
     local beds = Data.locations.beds
     if inPrison(source) then beds = Data.locations.jailbeds end
     beds[index].taken = false
-    player.getState(self):set('bedIndex', nil, true)
-    print(beds[index].taken)
+    playerState:set('bedIndex', nil, true)
 end)
 
 AddEventHandler('ox:playerLoaded', function(source, userid, charid)
@@ -62,17 +96,47 @@ RegisterNetEvent('medical:revive', function(target)
 end)
 
 RegisterNetEvent('medical:heal', function(amount, target)
+    print('triggered NetEvent medical:heal')
     TriggerClientEvent('medical:heal', target or source, amount or 200)
 end)
 
-lib.addCommand('builtin.everyone', { 'heal' }, function(source, args)
-    print(('healing %s for %s'):format(args.target, args.amount))
-    TriggerClientEvent('medical:heal', args.target or source, args.amount or 100)
-end, { 'amount:?number', 'target:?number' })
+lib.addCommand('heal', {
+    help = 'Heals yourself for 100',
+    params = {
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Override target player',
+            optional = true,
+        },
+        {
+            name = 'amount',
+            type = 'number',
+            help = 'Override healing amount',
+            optional = true,
+        }
+    },
+    restricted = 'group.everyone'
+}, function(source, args, raw)
+    print('triggered command heal')
+    TriggerClientEvent('medical:selfServiceHeal', args.target or source, args.amount or 100)
+end)
 
-lib.addCommand('builtin.everyone', { 'revive' }, function(source, args)
+lib.addCommand('revive', {
+    help = 'Revives the player',
+    params = {
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Target player\'s server id',
+            optional = true,
+        }
+    },
+    restricted = false
+}, function(source, args, raw)
+    print('triggered command revive')
     TriggerEvent('medical:revive', args.target or source)
-end, { 'target:?number' })
+end)
 
 lib.addCommand('builtin.everyone', { 'kill' }, function(source, args)
     local player = Ox.GetPlayer(args.target or source)
@@ -80,7 +144,6 @@ lib.addCommand('builtin.everyone', { 'kill' }, function(source, args)
     local playerState = player.getState()
     playerState:set('dead', true, true)
 end, { 'target:?number' })
-
 
 lib.addCommand('builtin.everyone', { 'setStatus' }, function(source, args)
     if args.status == nil then return end
