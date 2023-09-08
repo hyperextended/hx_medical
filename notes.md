@@ -8,6 +8,7 @@
 - [ ] Update any outdated ox_core functions/exports/calls
 - [ ] Add export to revive other players
 - [ ] Document states used in the script
+- [ ] Fix Heal command
 
 ## setr values
 

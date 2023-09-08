@@ -17,8 +17,8 @@ local function resetUnconscious()
     EnableAllControlActions(0)
     ClearPedTasks(cache.ped)
     SetPedToRagdoll(cache.ped, 2500, 1, 2)
-    exports.scully_emotemenu:ResetExpression()
-    exports.scully_emotemenu:ToggleLimitation(false)
+    exports.scully_emotemenu:resetExpression()
+    exports.scully_emotemenu:setLimitation(false)
     timer = 0
     PlayerIsUnconscious = false
 end
@@ -81,8 +81,8 @@ local function knockout(startingTimer)
         CreateThread(function()
             SetPedCanRagdoll(cache.ped, false)
             DisableAllControlActions(0)
-            exports.scully_emotemenu:ToggleLimitation(true)
-            exports.scully_emotemenu:SetExpression('dead_1')
+            exports.scully_emotemenu:setLimitation(true)
+            exports.scully_emotemenu:setExpression('dead_1')
             LoadAnimations()
             if IsPedRagdoll(cache.ped) then
                 ClearPedTasksImmediately(cache.ped)

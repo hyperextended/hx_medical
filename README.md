@@ -63,7 +63,7 @@ Update required to run this script properly.
 Run statuses.sql to update your database for compatibility or manually update the ox_statuses table.
 
 ```sql
-INSERT INTO `ox_statuses` (`name`, `ontick`) VALUES ('unconscious', -0.1);
+INSERT INTO `ox_statuses` (`name`, `ontick`) VALUES ('unconscious', -1);
 INSERT INTO `ox_statuses` (`name`, `ontick`) VALUES ('stagger', -0.1);
 INSERT INTO `ox_statuses` (`name`, `ontick`) VALUES ('bleed', 0);
 ```
