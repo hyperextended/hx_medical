@@ -98,6 +98,7 @@ local function handleDamage(weapon, bone, damageTaken)
 end
 
 RegisterNetEvent('medical:heal', function(amount)
+    SetEntityMaxHealth(cache.ped, 200)
     SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) + amount)
 end)
 

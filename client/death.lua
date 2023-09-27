@@ -16,6 +16,31 @@ local function dropInventory()
     end
 end
 
+RegisterNetEvent('medical:revive', function()
+    if not PlayerIsDead then
+        Wait(30) -- resolve issue with hud updating correctly
+        if lib.progressActive() then
+            lib.cancelProgress()
+        end
+        SetEntityMaxHealth(cache.ped, 200)
+        SetEntityHealth(cache.ped, 200)
+        RespawnTimer = 0
+        ClearPedTasks(cache.ped)
+        ClearPedBloodDamage(cache.ped)
+        if cache.vehicle then
+            SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
+        end
+        EnableAllControlActions(0)
+        SetEveryoneIgnorePlayer(cache.playerId, false)
+        SetEntityInvincible(PlayerPedId(), false)
+        SetPlayerInvincible(PlayerPedId(), false)
+        exports.scully_emotemenu:setLimitation(false)
+        canRespawn = false
+        SetPedCanRagdoll(cache.ped, true)
+        exports.scully_emotemenu:resetExpression()
+    end
+end)
+
 local function revive()
     if not PlayerIsDead then
         Wait(30) -- resolve issue with hud updating correctly
@@ -74,6 +99,7 @@ local function waitForRagdoll()
 end
 
 local function playDeathAnimation()
+    print('playing death animation')
     if PlayerIsDead then
         local anim = cache.vehicle and anims[2] or anims[1]
         local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
@@ -88,6 +114,7 @@ end
 local function countdownRespawnTimer()
     print("starting timer")
     while RespawnTimer > 0 and PlayerIsDead do
+        print('Respawn Timer = ' .. RespawnTimer .. ' PlayerIsDead = ' .. tostring(PlayerIsDead) .. ' timerRunning')
         playDeathAnimation()
         lib.showTextUI(('Respawn in %s'):format(RespawnTimer))
         RespawnTimer -= 1
@@ -122,7 +149,9 @@ local function checkForRespawn()
                 --[[                 repeat
                     Wait(100)
                 until not canRespawn ]]
-                hospitalBed()
+                print('cl_death:150')
+                Hospital:hospitalBed()
+                print('cl_death:152')
                 TriggerServerEvent('medical:revive')
                 return
             else
@@ -131,6 +160,27 @@ local function checkForRespawn()
         end
     end
 end
+
+RegisterNetEvent('medical:setDead', function()
+    local coords = GetEntityCoords(cache.ped)
+    NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, GetEntityHeading(cache.ped), false, false)
+    SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
+    SetEntityInvincible(PlayerPedId(), true)
+    SetEntityMaxHealth(cache.ped, 100)
+    SetEntityHealth(cache.ped, 100)
+
+    if cache.vehicle then
+        SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
+    end
+    Wait(200)
+    TriggerEvent('ox_inventory:disarm')
+    exports.scully_emotemenu:setExpression('dead_1')
+    Wait(1000)
+    if lib.progressActive() then
+        lib.cancelProgress()
+    end
+end)
+
 
 local function setDead()
     local coords = GetEntityCoords(cache.ped)
@@ -185,7 +235,7 @@ local function startDeathLoop()
 end
 
 AddEventHandler('ox:playerLoaded', function(data)
-    startDeathLoop()
+    -- startDeathLoop()
 end)
 
 -- Support resource restart
@@ -193,6 +243,7 @@ AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == cache.resource and cache.ped then
         SetEntityMaxHealth(cache.ped, 200)
         SetEntityHealth(cache.ped, 200)
+        SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
         PlayerIsLoaded = true
         startDeathLoop()
     end
@@ -200,6 +251,8 @@ end)
 
 AddStateBagChangeHandler('dead', 'player:' .. cache.serverId, function(bagName, key, value, _unused, replicated)
     if value == playerState.dead then return end
+    print('state.dead', value)
+    print('PlayerIsDead', PlayerIsDead)
     if value == true then
         PlayerIsDead = true
         TriggerServerEvent('ox:playerDeath', true)

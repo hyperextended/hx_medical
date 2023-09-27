@@ -24,8 +24,8 @@ shared_scripts {
 client_scripts {
     '@ox_core/imports/client.lua',
     'client/main.lua',
-    'client/death.lua',
     'client/hospital.lua',
+    'client/death.lua',
     'client/wounding.lua',
     'client/statuses/*.lua',
     'client/target/target.lua',
@@ -35,7 +35,11 @@ server_scripts {
     '@oxmysql/lib/MySQL.lua',
     '@ox_core/imports/server.lua',
     'server/main.lua',
+    'server/hospital.lua',
     'server/target/target.lua'
 }
 
-server_export ''
+server_exports {
+    'heal',
+    'revive'
+}

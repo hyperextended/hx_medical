@@ -1,6 +1,7 @@
 PlayerInPrison = false
 InBedDict = "anim@gangops@morgue@table@"
 InBedAnim = "body_search"
+Hospital = {}
 
 local prison = lib.points.new(vec3(1691.02, 2601.022, 45.564), 190)
 
@@ -12,7 +13,7 @@ function prison:onExit()
     if playerState.prison then playerState:set('prison', false, true) end
 end
 
-local function countdownBedTimer()
+function Hospital:countdownBedTimer()
     local bedTimer = 2
     while bedTimer > 0 do
         lib.showTextUI(('Respawn in %s'):format(bedTimer))
@@ -22,7 +23,7 @@ local function countdownBedTimer()
     end
 end
 
-local function leaveBed(bed)
+function Hospital:leaveBed(bed)
     local ped = cache.ped
     local getOutDict = 'switch@franklin@bed'
     local getOutAnim = 'sleep_getup_rubeyes'
@@ -38,10 +39,9 @@ local function leaveBed(bed)
     FreezeEntityPosition(bedObject, true)
     TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
     Wait(1000)
-    print(LocalPlayer.state.bedIndex)
 end
 
-local function wakeUpListener(bed)
+function Hospital:wakeUpListener(bed)
     lib.showTextUI('[E] to Get Up')
     local canGetUp = true
     while canGetUp do
@@ -61,7 +61,7 @@ local function wakeUpListener(bed)
             then
                 canGetUp = false
                 lib.hideTextUI()
-                leaveBed(bed)
+                self:leaveBed(bed)
                 return
             else
                 controlPressed = false
@@ -70,7 +70,7 @@ local function wakeUpListener(bed)
     end
 end
 
-local function keepInBed(bed)
+function Hospital:keepInBed(bed)
     IsInHospitalBed = true
     CanLeaveBed = false
     local player = cache.ped
@@ -92,11 +92,11 @@ local function keepInBed(bed)
     DoScreenFadeIn(1000)
     Wait(1000)
     FreezeEntityPosition(player, true)
-    countdownBedTimer()
-    wakeUpListener(bed)
+    self:countdownBedTimer()
+    self:wakeUpListener(bed)
 end
 
-local function teleportBed(coords)
+function Hospital:teleportBed(coords)
     DoScreenFadeOut(1000)
     while not IsScreenFadedOut() do Wait(100) end
     RequestCollisionAtCoord(coords.x, coords.y, coords.z)
@@ -107,11 +107,12 @@ local function teleportBed(coords)
     FreezeEntityPosition(cache.ped, false)
 end
 
-function hospitalBed()
+function Hospital:hospitalBed()
     local bed = lib.callback.await('medical:getBed', false)
+    LocalPlayer.state.dead = false
     if bed ~= nil then
-        teleportBed(bed.coords)
-        keepInBed(bed)
+        self:teleportBed(bed.coords)
+        self:keepInBed(bed)
     end
 end
 
@@ -182,5 +183,6 @@ exports.ox_target:addSphereZone({
 })
 
 AddEventHandler('ox:playerLogout', function()
+    if LocalPlayer.state.bedIndex == nil then return end
     TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
 end)

@@ -1,14 +1,20 @@
 <!-- add configurable functionality to drop some random invent items, ability to add exclusions -->
 
-## TODO
+## TODO Features
+
 
 - [ ] Add configurable functionality to drop some random invent items, ability to add exclusions
 - [ ] Add List of all setr values and how to use them
-- [ ] Package up hospital_map or another free pillbox and use that instead of the current one
-- [ ] Update any outdated ox_core functions/exports/calls
+- [x] Package up hospital_map or another free pillbox and use that instead of the current one
+- [x] Document states used in the script
+- [ ] Add targeting functionality to bandage other players and stop bleeding
+
+## TODO Fixes
+- [x] Update any outdated ox_core functions/exports/calls
+- [x] Fix Heal command
+- [x] Fix Revive command
 - [ ] Add export to revive other players
-- [ ] Document states used in the script
-- [ ] Fix Heal command
+- [ ] Add export to heal other players
 
 ## setr values
 

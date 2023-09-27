@@ -2,10 +2,12 @@
 -- Save persisting death/status data if configured
 -- Networked Revival
 -- Try to fix invisible dead players upon arrival as seen in other scripts
+local Medical = {}
 
 -- TODO: REPLACE UNSECURE EVENT WITH SERVER-SIDE LOGIC
 RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     local player = Ox.GetPlayer(source)
+    if player == nil then return end
     if changeType == 'add' then
         player.addStatus(status, value)
     elseif changeType == 'remove' then
@@ -15,30 +17,7 @@ RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     end
 end)
 
-local function findBed(beds)
-    for i = 1, #beds do
-        if not beds[i].taken then
-            return i
-        end
-    end
-end
-
-local function inPrison(serverId)
-    local player = Ox.GetPlayer(serverId)
-    if player.getState(self).prison then return true else return false end
-end
-
-lib.callback.register('medical:getBed', function()
-    local player = Ox.GetPlayer(source)
-    local beds = Data.locations.beds
-    if inPrison(source) then beds = Data.locations.jailbeds end
-    local index = findBed(beds)
-    player.getState(self):set('bedIndex', index, true)
-    beds[index].taken = true
-    -- print(json.encode(beds, { indent = true }))
-    return beds[index], index
-end)
-
+-- WIP not functional
 lib.callback.register('medical:dropInventory', function(source, coords)
     local victim = source
     local victimCoords = coords
@@ -74,34 +53,59 @@ lib.callback.register('medical:dropInventory', function(source, coords)
     -- return dropId
 end)
 
-RegisterNetEvent('medical:releaseBed', function(index)
-    if not index then return end
-    local playerState = Player(source).state
-    local player = Ox.GetPlayer(source)
-    local beds = Data.locations.beds
-    if inPrison(source) then beds = Data.locations.jailbeds end
-    beds[index].taken = false
-    playerState:set('bedIndex', nil, true)
-end)
-
-AddEventHandler('ox:playerLoaded', function(source, userid, charid)
+AddEventHandler('ox:playerLoaded', function(source, userId, charId)
     local player = Ox.GetPlayer(source)
 end)
 
-RegisterNetEvent('medical:revive', function(target)
-    local player = Ox.GetPlayer(target or source)
+
+---@param target? number
+Medical.revive = function(target)
+    local player = Ox.GetPlayer(target)
     if not player then return end
-    local playerState = player.getState(self)
-    playerState:set('dead', false, true)
-end)
+    player.getState(self):set('dead', false, true)
+    TriggerClientEvent('medical:revive', target)
+end
+
+---@param target number
+---@param amount? number
+Medical.heal = function(target, amount)
+    TriggerClientEvent('medical:heal', target, amount or 200)
+end
+
+exports('heal', Medical.heal)
+exports('revive', Medical.revive)
 
 RegisterNetEvent('medical:heal', function(amount, target)
     print('triggered NetEvent medical:heal')
-    TriggerClientEvent('medical:heal', target or source, amount or 200)
+    Medical.heal(source, target, amount)
 end)
 
+RegisterNetEvent('medical:revive', function(target)
+    if source == nil then return end --possibly cheating
+    print('triggered NetEvent medical:revive')
+    Medical.revive(target or source)
+end)
+
+-- revive (admins only)
+lib.addCommand('revive', {
+    help = "Revives the specified player, self if blank",
+    params = {
+        {
+            name = "target",
+            type = "playerId",
+            help = "Target player's server id",
+            optional = true,
+        },
+    },
+    restricted = 'group.admin'
+}, function(source, args, raw)
+    print('triggered command revive')
+    Medical.revive(args.target or source)
+end)
+
+-- heal (admins only)
 lib.addCommand('heal', {
-    help = 'Heals yourself for 100',
+    help = 'Heals the specified player',
     params = {
         {
             name = 'target',
@@ -116,42 +120,56 @@ lib.addCommand('heal', {
             optional = true,
         }
     },
-    restricted = 'group.everyone'
+    restricted = 'group.admin'
 }, function(source, args, raw)
     print('triggered command heal')
-    TriggerClientEvent('medical:selfServiceHeal', args.target or source, args.amount or 100)
+    Medical.heal(args.target, args.amount or 200)
 end)
 
-lib.addCommand('revive', {
-    help = 'Revives the player',
+-- kill (admins only)
+lib.addCommand('kill', {
+    help = "Unalives specified player, self if blank",
     params = {
         {
-            name = 'target',
-            type = 'playerId',
-            help = 'Target player\'s server id',
+            name = "target",
+            type = "playerId",
+            help = "Target player's server id",
             optional = true,
-        }
+        },
     },
-    restricted = false
+    restricted = 'group.admin'
 }, function(source, args, raw)
-    print('triggered command revive')
-    TriggerEvent('medical:revive', args.target or source)
-end)
-
-lib.addCommand('builtin.everyone', { 'kill' }, function(source, args)
     local player = Ox.GetPlayer(args.target or source)
     if not player then return end
     local playerState = player.getState()
     playerState:set('dead', true, true)
-end, { 'target:?number' })
+end)
 
-lib.addCommand('builtin.everyone', { 'setStatus' }, function(source, args)
+lib.addCommand('setStatus', {
+    help = 'Sets the specified status to the specified amount',
+    params = {
+        {
+            name = 'status',
+            type = 'string',
+            help = 'Status to set',
+            optional = false,
+        },
+        {
+            name = 'amount',
+            type = 'number',
+            help = 'Amount to set status to',
+            optional = true,
+        }
+    },
+    restricted = 'group.admin'
+}, function(source, args, raw)
+    local player = Ox.GetPlayer(source)
+    if player == nil then return end
     if args.status == nil then return end
     local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
-    local player = Ox.GetPlayer(source)
     for i = 1, #statuses do
         if statuses[i] == args.status then
             player.setStatus(args.status, tonumber(args.amount) or 100)
         end
     end
-end, { 'status:string', 'amount:?number' })
+end)
