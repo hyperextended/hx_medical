@@ -39,6 +39,7 @@ local function countdownUnconsciousTimer(timer)
     -- while timer > 0 and PlayerIsUnconscious do
     playUnconsciousAnimation()
     lib.hideTextUI()
+    local timer = math.floor(timer)
     lib.showTextUI(('Unconscious - %s'):format(timer))
     if PlayerIsDead then
         lib.hideTextUI()
@@ -73,7 +74,17 @@ local function checkForWakeUp()
         end
     end
 end
-
+local function waitForRagdoll()
+    local timer = 0
+    while GetEntitySpeed(cache.ped) > 0.5 or IsPedRagdoll(cache.ped) do
+        timer = timer + 1
+        Wait(200)
+        if timer > 20 then
+            SetPedCanRagdoll(cache.ped, false)
+            return
+        end
+    end
+end
 local function knockout(startingTimer)
     if PlayerIsDead then return end
     if PlayerIsUnconscious then
@@ -84,6 +95,7 @@ local function knockout(startingTimer)
             exports.scully_emotemenu:setLimitation(true)
             exports.scully_emotemenu:setExpression('dead_1')
             LoadAnimations()
+            waitForRagdoll()
             if IsPedRagdoll(cache.ped) then
                 ClearPedTasksImmediately(cache.ped)
             end
@@ -99,18 +111,6 @@ local function knockout(startingTimer)
         end
         Wait(500)
         checkForWakeUp()
-        -- if lib.progressCircle({
-        --         duration = timer * 1000,
-        --         label = 'unconscious',
-        --         useWhileDead = true,
-        --         allowRagdoll = true,
-        --         allowCuffed = true,
-        --         allowFalling = true,
-        --         canCancel = false,
-        --     })
-        -- then
-        --     TriggerServerEvent('medical:changeStatus', 'unconscious', 0)
-        -- end
     end
 end
 

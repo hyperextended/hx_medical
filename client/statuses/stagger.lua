@@ -5,32 +5,39 @@ local prevWalk
 local walkAnim
 
 local function canTrip(ped)
-    if IsPedWalking(ped) or IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then return false
-    elseif IsPedRunning(ped) or IsPedSprinting(ped) then return true else return false end
+    if IsPedWalking(ped) or IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then
+        return false
+    elseif IsPedRunning(ped) or IsPedSprinting(ped) then
+        return true
+    else
+        return false
+    end
 end
 
 local function stagger()
-    prevWalk = exports.scully_emotemenu:GetCurrentWalk()
+    prevWalk = exports.scully_emotemenu:getCurrentWalk()
     while PlayerIsStaggered do
-        local curWalk = exports.scully_emotemenu:GetCurrentWalk()
+        local curWalk = exports.scully_emotemenu:getCurrentWalk()
         local chance = math.random(100)
         if curWalk ~= walkAnim then
-            exports.scully_emotemenu:SetWalk(walkAnim)
+            exports.scully_emotemenu:setWalk(walkAnim)
         end
         SetPedMoveRateOverride(cache.ped, 100 - (intensity / 5))
         if canTrip(cache.ped) and chance > 95 then
             ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.01)
-            SetPedToRagdollWithFall(cache.ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+            SetPedToRagdollWithFall(cache.ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                0.0)
         end
         Wait(1000)
     end
     if prevWalk ~= 'default' then
-        exports.scully_emotemenu:SetWalk(prevWalk)
+        exports.scully_emotemenu:setWalk(prevWalk)
     else
-        exports.scully_emotemenu:ResetWalk()
+        exports.scully_emotemenu:resetWalk()
     end
     walkAnim = nil
 end
+
 
 local function MaleFemale()
     if player.gender == 'female' then
@@ -53,13 +60,3 @@ AddEventHandler('ox:statusTick', function(statuses)
     end
     intensity = statuses.stagger
 end)
-
-if GetConvarInt('medical:debug', 0) == 1 then
-    RegisterCommand('stagger', function(source, args, rawCommand)
-        if intensity > 0 then
-            TriggerServerEvent('medical:changeStatus', 'stagger', 0)
-        else
-            TriggerServerEvent('medical:changeStatus', 'stagger', tonumber(args[1]))
-        end
-    end)
-end

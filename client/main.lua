@@ -130,3 +130,12 @@ if GetConvarInt('medical:debug', 0) == 1 then
         lib.setClipboard(json.encode(weaponTable, { indent = true }))
     end)
 end
+
+
+-- CreateThread(function()
+--     local player = LocalPlayer.state
+--     while true do
+--         Wait(1000)
+--         print('invBusy', LocalPlayer.state.invBusy)
+--     end
+-- end)

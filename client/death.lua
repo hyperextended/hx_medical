@@ -97,7 +97,6 @@ end
 
 local function countdownRespawnTimer()
     while RespawnTimer > 0 and PlayerIsDead do
-        print('Respawn Timer = ' .. RespawnTimer .. ' PlayerIsDead = ' .. tostring(PlayerIsDead) .. ' timerRunning')
         lib.showTextUI(('Respawn in %s'):format(RespawnTimer))
         RespawnTimer -= 1
         Wait(1000)
@@ -139,26 +138,6 @@ local function checkForRespawn()
         end
     end
 end
-
-RegisterNetEvent('medical:setDead', function()
-    local coords = GetEntityCoords(cache.ped)
-    NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, GetEntityHeading(cache.ped), false, false)
-    SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
-    SetEntityInvincible(PlayerPedId(), true)
-    SetEntityMaxHealth(cache.ped, 100)
-    SetEntityHealth(cache.ped, 100)
-
-    if cache.vehicle then
-        SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
-    end
-    Wait(200)
-    TriggerEvent('ox_inventory:disarm')
-    exports.scully_emotemenu:setExpression('dead_1')
-    Wait(1000)
-    if lib.progressActive() then
-        lib.cancelProgress()
-    end
-end)
 
 local function setPlayerDead()
     local coords = GetEntityCoords(cache.ped)
@@ -214,7 +193,6 @@ local function startDeathLoop()
                 PlayerIsDead = true
                 TriggerServerEvent('ox:playerDeath', true)
                 TriggerServerEvent('medical:playerDeath', true)
-                playerState:set('dead', true, true)
             end
         end
     end)

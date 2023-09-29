@@ -57,6 +57,13 @@ AddEventHandler('ox:playerLoaded', function(source, userId, charId)
     local player = Ox.GetPlayer(source)
 end)
 
+RegisterNetEvent('medical:playerDeath', function(state)
+    local player = Ox.GetPlayer(source)
+
+    if player and player.charId then
+        TriggerClientEvent('medical:playerDeath', source)
+    end
+end)
 
 ---@param target? number
 Medical.revive = function(target)

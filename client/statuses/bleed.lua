@@ -3,7 +3,7 @@ local intensity = 0
 local blurCounter = 0
 
 local function blurScreen()
-    Citizen.CreateThread(function()
+    CreateThread(function()
         TriggerScreenblurFadeIn(1000.0)
         Wait(1000 * (intensity / 10))
         TriggerScreenblurFadeOut(1000.0)
