@@ -61,8 +61,9 @@ end)
 ---@param target? number
 Medical.revive = function(target)
     local player = Ox.GetPlayer(target)
+
     if not player then return end
-    player.getState(self):set('dead', false, true)
+
     TriggerClientEvent('medical:revive', target)
 end
 
@@ -140,9 +141,10 @@ lib.addCommand('kill', {
     restricted = 'group.admin'
 }, function(source, args, raw)
     local player = Ox.GetPlayer(args.target or source)
+
     if not player then return end
-    local playerState = player.getState()
-    playerState:set('dead', true, true)
+
+    TriggerClientEvent('medical:killPlayer', args.target or source)
 end)
 
 lib.addCommand('setStatus', {

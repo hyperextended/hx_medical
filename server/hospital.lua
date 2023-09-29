@@ -16,10 +16,14 @@ end
 function Hospital:getBed(source)
     local player = Ox.GetPlayer(source)
     local beds = Data.locations.beds
+
     if self:inPrison(source) then beds = Data.locations.jailbeds end
+
     local bed = self:findEmptyBed(beds)
+
     player.getState():set('bed', bed, true)
     beds[bed].taken = true
+    
     return beds[bed]
 end
 
@@ -33,5 +37,5 @@ RegisterNetEvent('medical:releaseBed', function(index)
     local beds = Data.locations.beds
     if Hospital:inPrison(source) then beds = Data.locations.jailbeds end
     beds[index].taken = false
-    playerState:set('bedIndex', nil, true)
+    playerState:set('bed', nil, true)
 end)

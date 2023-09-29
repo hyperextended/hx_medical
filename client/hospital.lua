@@ -32,12 +32,12 @@ function Hospital:leaveBed(bed)
     SetEntityInvincible(ped, false)
     SetEntityHeading(ped, bed.coords.w + 90)
     TaskPlayAnim(ped, getOutDict, getOutAnim, 100.0, 1.0, -1, 8, -1, false, false, false)
-    Wait(4000)
+    -- Wait(4000)
     ClearPedTasks(ped)
     local bedObject = GetClosestObjectOfType(bed.coords.x, bed.coords.y, bed.coords.z,
         1.0, bed.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
-    TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
+    TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bed)
     Wait(1000)
 end
 
@@ -97,8 +97,10 @@ function Hospital:keepInBed(bed)
 end
 
 function Hospital:teleportBed(coords)
+    print('teleporting to bed')
     DoScreenFadeOut(1000)
     while not IsScreenFadedOut() do Wait(100) end
+    ClearPedTasks(cache.ped)
     RequestCollisionAtCoord(coords.x, coords.y, coords.z)
     SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z)
     SetEntityHeading(cache.ped, coords.w)
@@ -109,11 +111,11 @@ end
 
 function Hospital:hospitalBed()
     local bed = lib.callback.await('medical:getBed', false)
-    LocalPlayer.state.dead = false
     if bed ~= nil then
         self:teleportBed(bed.coords)
         self:keepInBed(bed)
     end
+    print(LocalPlayer.state.bed)
 end
 
 RegisterNetEvent('medical:selfService', function()
@@ -183,6 +185,6 @@ exports.ox_target:addSphereZone({
 })
 
 AddEventHandler('ox:playerLogout', function()
-    if LocalPlayer.state.bedIndex == nil then return end
-    TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bedIndex)
+    if LocalPlayer.state.bed == nil then return end
+    TriggerServerEvent('medical:releaseBed', LocalPlayer.state.bed)
 end)
