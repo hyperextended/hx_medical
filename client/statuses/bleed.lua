@@ -2,11 +2,15 @@ PlayerIsBleeding = false
 local intensity = 0
 local blurCounter = 0
 
+RegisterNetEvent('medical:clearBlurEffect',function()
+    TriggerScreenblurFadeOut(0)
+end)
+
 local function blurScreen()
     CreateThread(function()
-        TriggerScreenblurFadeIn(1000.0)
+        TriggerScreenblurFadeIn(1500.0)
         Wait(1000 * (intensity / 10))
-        TriggerScreenblurFadeOut(1000.0)
+        TriggerScreenblurFadeOut(1500.0)
     end)
 end
 
@@ -17,16 +21,16 @@ end
 
 local function bleed()
     local desaturation = 0
+
     while PlayerIsBleeding and not PlayerIsDead do
         if PlayerIsDead then return end
-        local coords = GetEntityCoords(cache.ped)
-        local forwardVector = GetEntityForwardVector(cache.ped)
+
         local tickTime = (110 - intensity) * 100
         local tickDamage = 1
         local desatTick = intensity / 20000
 
         if desaturation <= 0.80 then desaturation += desatTick end
-        
+
         blurCounter += 1
 
         if blurCounter == 2 then
@@ -38,13 +42,18 @@ local function bleed()
             })
         end
 
-        if blurCounter >= 10 then blurScreen() blurCounter = 0 end
+        if blurCounter >= 10 then
+            blurScreen()
+            blurCounter = 0
+        end
 
         SetTimecycleModifier("rply_saturation_neg")
         SetTimecycleModifierStrength(desaturation)
+
         ApplyDamageToPed(cache.ped, tickDamage, false)
         ApplyPedBlood(cache.ped, 0, math.random(0, 4) + 0.0, math.random(-0, 4) + 0.0, math.random(-0, 4) + 0.0,
             'wound_sheet')
+
         Wait(tickTime)
     end
 end
@@ -52,6 +61,7 @@ end
 
 AddEventHandler('ox:statusTick', function(statuses)
     if PlayerIsDead or not statuses.bleed then return end
+
     if not PlayerIsBleeding and statuses.bleed > 25 then
         PlayerIsBleeding = true
         playerState:set('bleeding', true, true)
@@ -64,11 +74,10 @@ AddEventHandler('ox:statusTick', function(statuses)
         })
         bleed()
     elseif PlayerIsBleeding and statuses.bleed == 0 then
+        intensity = 0
+        clearBleedEffect()
         PlayerIsBleeding = false
         playerState:set('bleeding', false, true)
-        intensity = 0
-        SetTimecycleModifierStrength(0)
-        ClearTimecycleModifier()
     end
     intensity = statuses.bleed
 end)
@@ -82,3 +91,11 @@ if GetConvarInt('medical:debug', 0) == 1 then
         end
     end)
 end
+
+
+CreateThread(function()
+    while true do
+        print('intensity', intensity, 'isBleeding', PlayerIsBleeding, GetEntityHealth(cache.ped))
+        Wait(1000)
+    end
+end)

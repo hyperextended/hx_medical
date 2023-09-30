@@ -22,6 +22,7 @@ end
 RegisterNetEvent('medical:revive', function()
     PlayerIsDead = false
     TriggerServerEvent('ox:playerDeath', false)
+    TriggerEvent('medical:clearBlurEffect')
     Wait(30)
     if lib.progressActive() then
         lib.cancelProgress()
