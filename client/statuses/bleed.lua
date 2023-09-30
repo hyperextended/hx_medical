@@ -10,6 +10,11 @@ local function blurScreen()
     end)
 end
 
+local function clearBleedEffect()
+    SetTimecycleModifierStrength(0)
+    ClearTimecycleModifier()
+end
+
 local function bleed()
     local desaturation = 0
     while PlayerIsBleeding and not PlayerIsDead do
@@ -19,9 +24,11 @@ local function bleed()
         local tickTime = (110 - intensity) * 100
         local tickDamage = 1
         local desatTick = intensity / 20000
+
         if desaturation <= 0.80 then desaturation += desatTick end
-        print(desaturation)
+        
         blurCounter += 1
+
         if blurCounter == 2 then
             lib.notify({
                 title = 'Status',
@@ -30,10 +37,11 @@ local function bleed()
                 type = 'error'
             })
         end
+
         if blurCounter >= 10 then blurScreen() blurCounter = 0 end
-        SetTimecycleModifier("rply_saturation_neg") -- might not needed if notification is not stuck on screen
-        SetTimecycleModifierStrength(desaturation) -- might crash the game idk need more test
-        -- SetEntityHealth(cache.ped, GetEntityHealth(cache.ped) - tickDamage)
+
+        SetTimecycleModifier("rply_saturation_neg")
+        SetTimecycleModifierStrength(desaturation)
         ApplyDamageToPed(cache.ped, tickDamage, false)
         ApplyPedBlood(cache.ped, 0, math.random(0, 4) + 0.0, math.random(-0, 4) + 0.0, math.random(-0, 4) + 0.0,
             'wound_sheet')

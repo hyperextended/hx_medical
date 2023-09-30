@@ -5,7 +5,7 @@ local anims = {
     { 'missfinale_c1@',             'lying_dead_player0' },
     { 'veh@low@front_ps@idle_duck', 'sit' },
     { 'dead',                       'dead_a' },
-    { 'dam_ko',                     'drown' },
+    { 'nm',                         'firemans_carry' },
 }
 
 -- TaskPlayAnim(playerPed, 'dam_ko', 'drown', 8.0, 8.0, -1, 33, 0, 0, 0, 0)
@@ -83,7 +83,7 @@ end
 
 local function playDeathAnimation()
     if PlayerIsDead then
-        local anim = cache.vehicle and anims[2] or anims[1]
+        local anim = cache.vehicle and anims[2] or IsEntityInWater(cache.ped) and anims[4] or anims[1]
         print(anim[1], anim[2])
         local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
         lib.disableControls()

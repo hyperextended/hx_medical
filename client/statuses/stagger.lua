@@ -1,8 +1,7 @@
 PlayerIsStaggered = false
 local intensity = 100
-local prevWalk
-
-local walkAnim
+local prevWalk = nil
+local walkAnim = nil
 
 local function canTrip(ped)
     if IsPedWalking(ped) or IsPedSwimming(ped) or IsPedClimbing(ped) or IsPedRagdoll(ped) or not IsPedOnFoot(ped) then
@@ -16,25 +15,32 @@ end
 
 local function stagger()
     prevWalk = exports.scully_emotemenu:getCurrentWalk()
+
     while PlayerIsStaggered do
         local curWalk = exports.scully_emotemenu:getCurrentWalk()
         local chance = math.random(100)
+
         if curWalk ~= walkAnim then
             exports.scully_emotemenu:setWalk(walkAnim)
         end
+
         SetPedMoveRateOverride(cache.ped, 100 - (intensity / 5))
+
         if canTrip(cache.ped) and chance > 95 then
             ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', 0.01)
             SetPedToRagdollWithFall(cache.ped, 1500, 2000, 1, GetEntityForwardVector(ped), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 0.0)
         end
+
         Wait(1000)
     end
+
     if prevWalk ~= 'default' then
         exports.scully_emotemenu:setWalk(prevWalk)
     else
         exports.scully_emotemenu:resetWalk()
     end
+
     walkAnim = nil
 end
 
