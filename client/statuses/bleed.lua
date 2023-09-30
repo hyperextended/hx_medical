@@ -2,7 +2,7 @@ PlayerIsBleeding = false
 local intensity = 0
 local blurCounter = 0
 
-RegisterNetEvent('medical:clearBlurEffect',function()
+RegisterNetEvent('medical:clearBlurEffect', function()
     TriggerScreenblurFadeOut(0)
 end)
 
@@ -91,11 +91,3 @@ if GetConvarInt('medical:debug', 0) == 1 then
         end
     end)
 end
-
-
-CreateThread(function()
-    while true do
-        print('intensity', intensity, 'isBleeding', PlayerIsBleeding, GetEntityHealth(cache.ped))
-        Wait(1000)
-    end
-end)
