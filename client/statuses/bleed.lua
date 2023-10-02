@@ -75,7 +75,7 @@ AddEventHandler('ox:statusTick', function(statuses)
         bleed()
     elseif PlayerIsBleeding and statuses.bleed == 0 then
         intensity = 0
-        clearBleedEffect()
+        TriggerEvent('clearBleedEffect')
         PlayerIsBleeding = false
         playerState:set('bleeding', false, true)
     end

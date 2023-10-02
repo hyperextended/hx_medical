@@ -56,14 +56,6 @@ local function initializeVariables()
     PlayerIsStaggered = false
 end
 
-local function resetStatuses()
-    local statuses = { 'hunger', 'thirst', 'stagger', 'unconscious', 'bleed', 'stress' }
-    for i = 1, #statuses do
-        -- print(statuses[i])
-        TriggerServerEvent('medical:changeStatus', statuses[i], 0)
-    end
-end
-
 function LoadAnimations()
     for i = 1, #anims do
         lib.requestAnimDict(anims[i][1])
@@ -152,10 +144,14 @@ local function setPlayerDead()
     if cache.vehicle then
         SetPedIntoVehicle(cache.ped, cache.vehicle, cache.seat)
     end
+
     Wait(200)
+    
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:setExpression('dead_1')
+
     Wait(1000)
+
     if lib.progressActive() then
         lib.cancelProgress()
     end
@@ -163,7 +159,6 @@ end
 
 RegisterNetEvent('medical:playerDeath', function()
     initializeVariables()
-    resetStatuses()
     exports.scully_emotemenu:setLimitation(true)
     SetPlayerInvincible(cache.playerId, true)
     LoadAnimations()

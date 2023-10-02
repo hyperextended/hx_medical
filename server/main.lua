@@ -61,6 +61,9 @@ RegisterNetEvent('medical:playerDeath', function(state)
     local player = Ox.GetPlayer(source)
 
     if player and player.charId then
+        player.setStatus('unconscious', 0)
+        player.setStatus('bleed', 0)
+        player.setStatus('stagger', 0)
         TriggerClientEvent('medical:playerDeath', source)
     end
 end)
@@ -70,7 +73,10 @@ Medical.revive = function(target)
     local player = Ox.GetPlayer(target)
 
     if not player then return end
-
+    player.setStatus('unconscious', 0)
+    player.setStatus('bleed', 0)
+    player.setStatus('stagger', 0)
+    TriggerClientEvent('medical:wakeup', target)
     TriggerClientEvent('medical:revive', target)
 end
 
@@ -168,11 +174,20 @@ lib.addCommand('setStatus', {
             type = 'number',
             help = 'Amount to set status to',
             optional = true,
-        }
+        },
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Player to set status for',
+            optional = true,
+        },
     },
     restricted = 'group.admin'
 }, function(source, args, raw)
-    local player = Ox.GetPlayer(source)
+    local target = source
+    if args.target ~= nil then target = args.target end
+    print('target', target)
+    local player = Ox.GetPlayer(target)
     if player == nil then return end
     if args.status == nil then return end
     local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
