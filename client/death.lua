@@ -77,9 +77,10 @@ end
 local function playDeathAnimation()
     if PlayerIsDead then
         local anim = cache.vehicle and anims[2] or IsEntityInWater(cache.ped) and anims[4] or anims[1]
-        print(anim[1], anim[2])
         local isInAnim = IsEntityPlayingAnim(cache.ped, anim[1], anim[2], 3)
+
         lib.disableControls()
+
         if not isInAnim then
             TaskPlayAnim(cache.ped, anim[1], anim[2], 8.0, 8.0, -1, 33, 0, false, false, false)
         end
@@ -120,9 +121,14 @@ local function checkForRespawn()
                 })
             then
                 lib.hideTextUI()
-                print('cl_death:150')
-                Hospital:hospitalBed()
-                print('cl_death:152')
+                print('medical:useBeds', GetConvarInt('medical:useBeds', 1), type(GetConvarInt('medical:useBeds', 1)))
+                if GetConvarInt('medical:useBeds', 1) == 1 then
+                    print('hospitalBed')
+                    Hospital:hospitalBed()
+                else
+                    print('teleportHospital')
+                    Hospital:teleportHospital()
+                end
                 TriggerServerEvent('medical:revive')
                 return
             else
@@ -146,7 +152,7 @@ local function setPlayerDead()
     end
 
     Wait(200)
-    
+
     TriggerEvent('ox_inventory:disarm')
     exports.scully_emotemenu:setExpression('dead_1')
 

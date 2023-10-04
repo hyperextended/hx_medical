@@ -134,21 +134,49 @@ Data.BoneIndexes = { -- Correspond bone labels to their hash number
     ['RFOOT'] = 52301,
 }
 
+-- Data.locations = {
+--     beds = {
+--         [1] = { coords = vec4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
+--         [2] = { coords = vec4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
+--         [3] = { coords = vec4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672 },
+--         [4] = { coords = vec4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672 },
+--         [5] = { coords = vec4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672 },
+--         [6] = { coords = vec4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327 },
+--         [7] = { coords = vec4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327 },
+--         [8] = { coords = vec4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327 },
+--     },
+--     jailbeds = {
+--         [1] = { coords = vec4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
+--         [2] = { coords = vec4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672 },
+--         [3] = { coords = vec4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672 },
+--         [4] = { coords = vec4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672 },
+--     }
+-- }
+
+
 Data.locations = {
     beds = {
-        [1] = { coords = vec4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
-        [2] = { coords = vec4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
-        [3] = { coords = vec4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672 },
-        [4] = { coords = vec4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672 },
-        [5] = { coords = vec4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672 },
-        [6] = { coords = vec4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327 },
-        [7] = { coords = vec4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327 },
-        [8] = { coords = vec4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327 },
+        hospitalBeds = {
+            [1] = { coords = vec4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868 },
+            [2] = { coords = vec4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868 },
+            [3] = { coords = vec4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672 },
+            [4] = { coords = vec4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672 },
+            [5] = { coords = vec4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672 },
+            [6] = { coords = vec4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327 },
+            [7] = { coords = vec4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327 },
+            [8] = { coords = vec4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327 },
+
+        },
+        jailBeds = {
+            [1] = { coords = vec4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
+            [2] = { coords = vec4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672 },
+            [3] = { coords = vec4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672 },
+            [4] = { coords = vec4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672 },
+
+        }
     },
-    jailbeds = {
-        [1] = { coords = vec4(1761.96, 2597.74, 45.66, 270.14), taken = false, model = 2117668672 },
-        [2] = { coords = vec4(1761.96, 2591.51, 45.66, 269.8), taken = false, model = 2117668672 },
-        [3] = { coords = vec4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672 },
-        [4] = { coords = vec4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672 },
+    lobby = {
+        hospital = vec4(302.953, -583.602, 43.291, 202.181),
+        jail = vec4(1766.852, 2564.965, 45.564, 166.962)
     }
 }

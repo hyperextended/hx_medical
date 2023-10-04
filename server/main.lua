@@ -64,6 +64,8 @@ RegisterNetEvent('medical:playerDeath', function(state)
         player.setStatus('unconscious', 0)
         player.setStatus('bleed', 0)
         player.setStatus('stagger', 0)
+        if player.getStatus('hunger') > 50 and GetConvar('medical:resetHunger') then player.setStatus('hunger', 50) end
+        if player.getStatus('thirst') > 50 and GetConvar('medical:resetThirst') then player.setStatus('thirst', 50) end
         TriggerClientEvent('medical:playerDeath', source)
     end
 end)
@@ -78,6 +80,8 @@ Medical.revive = function(target)
     player.setStatus('stagger', 0)
     TriggerClientEvent('medical:wakeup', target)
     TriggerClientEvent('medical:revive', target)
+    TriggerClientEvent('medical:clearBlurEffect', target)
+    TriggerClientEvent('medical:clearBleedEffect', target)
 end
 
 ---@param target number
@@ -90,13 +94,11 @@ exports('heal', Medical.heal)
 exports('revive', Medical.revive)
 
 RegisterNetEvent('medical:heal', function(amount, target)
-    print('triggered NetEvent medical:heal')
     Medical.heal(source, target, amount)
 end)
 
 RegisterNetEvent('medical:revive', function(target)
     if source == nil then return end --possibly cheating
-    print('triggered NetEvent medical:revive')
     Medical.revive(target or source)
 end)
 
@@ -113,7 +115,6 @@ lib.addCommand('revive', {
     },
     restricted = 'group.admin'
 }, function(source, args, raw)
-    print('triggered command revive')
     Medical.revive(args.target or source)
 end)
 

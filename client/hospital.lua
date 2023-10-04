@@ -23,6 +23,27 @@ function Hospital:countdownBedTimer()
     end
 end
 
+function Hospital:teleportHospital()
+    local coords = Data.locations.lobby.hospital
+    if LocalPlayer.state.prison then
+        coords = Data.locations.lobby.jail
+    end
+    DoScreenFadeOut(1000)
+    while not IsScreenFadedOut() do
+        Wait(100)
+    end
+    ClearPedTasks(cache.ped)
+    RequestCollisionAtCoord(coords.x, coords.y, coords.z)
+    SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z)
+    SetEntityHeading(cache.ped, coords.w)
+    FreezeEntityPosition(cache.ped, true)
+    while not HasCollisionLoadedAroundEntity(cache.ped) do
+        Wait(0)
+    end
+    FreezeEntityPosition(cache.ped, false)
+    DoScreenFadeIn(1000)
+end
+
 function Hospital:leaveBed(bed)
     local ped = cache.ped
     local getOutDict = 'switch@franklin@bed'
@@ -97,7 +118,6 @@ function Hospital:keepInBed(bed)
 end
 
 function Hospital:teleportBed(coords)
-    print('teleporting to bed')
     DoScreenFadeOut(1000)
     while not IsScreenFadedOut() do Wait(100) end
     ClearPedTasks(cache.ped)
@@ -111,11 +131,11 @@ end
 
 function Hospital:hospitalBed()
     local bed = lib.callback.await('medical:getBed', false)
+
     if bed ~= nil then
         self:teleportBed(bed.coords)
         self:keepInBed(bed)
     end
-    print(LocalPlayer.state.bed)
 end
 
 RegisterNetEvent('medical:selfService', function()
@@ -153,7 +173,6 @@ RegisterNetEvent('medical:selfService', function()
         if not playerState.dead then
             local statuses = { 'hunger', 'thirst', 'stagger', 'unconscious', 'bleed', 'stress' }
             for i = 1, #statuses do
-                -- print(statuses[i])
                 TriggerServerEvent('medical:changeStatus', statuses[i], 0)
             end
             SetEntityHealth(cache.ped, 200)

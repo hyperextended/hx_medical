@@ -134,6 +134,12 @@ AddEventHandler('ox:statusTick', function(statuses)
     timer = statuses.unconscious
 end)
 
+AddEventHandler('ox:playerLogout', function()
+    if LocalPlayer.state.unconscious == nil then return end
+    PlayerIsUnconscious = false
+end)
+
+
 if GetConvarInt('medical:debug', 0) == 1 then
     RegisterCommand('unconscious', function(source, args, rawCommand)
         if timer > 5 then

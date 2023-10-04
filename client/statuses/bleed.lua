@@ -3,7 +3,15 @@ local intensity = 0
 local blurCounter = 0
 
 RegisterNetEvent('medical:clearBlurEffect', function()
-    TriggerScreenblurFadeOut(0)
+    TriggerScreenblurFadeOut(1)
+end)
+
+RegisterNetEvent('medical:clearBleedEffect', function()
+    PlayerIsBleeding = false
+    intensity = 0
+    blurCounter = 0
+    SetTimecycleModifier("default")
+    SetTimecycleModifierStrength(0.0)
 end)
 
 local function blurScreen()
@@ -12,11 +20,6 @@ local function blurScreen()
         Wait(1000 * (intensity / 10))
         TriggerScreenblurFadeOut(1500.0)
     end)
-end
-
-local function clearBleedEffect()
-    SetTimecycleModifierStrength(0)
-    ClearTimecycleModifier()
 end
 
 local function bleed()
@@ -60,8 +63,7 @@ end
 
 
 AddEventHandler('ox:statusTick', function(statuses)
-    if PlayerIsDead or not statuses.bleed then return end
-
+    if PlayerIsDead or not statuses.bleed or not PlayerIsLoaded then return end
     if not PlayerIsBleeding and statuses.bleed > 25 then
         PlayerIsBleeding = true
         playerState:set('bleeding', true, true)
@@ -80,6 +82,14 @@ AddEventHandler('ox:statusTick', function(statuses)
         playerState:set('bleeding', false, true)
     end
     intensity = statuses.bleed
+end)
+
+AddEventHandler('ox:playerLogout', function()
+    playerState:set('bleeding', false, true)
+    intensity = 0
+    TriggerEvent('medical:clearBleedEffect')
+    TriggerEvent('medical:clearBlurEffect')
+    PlayerIsBleeding = false
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
