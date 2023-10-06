@@ -135,8 +135,8 @@ AddEventHandler('ox:statusTick', function(statuses)
 end)
 
 AddEventHandler('ox:playerLogout', function()
-    if LocalPlayer.state.unconscious == nil then return end
     PlayerIsUnconscious = false
+    if LocalPlayer.state.unconscious == nil then return end
 end)
 
 

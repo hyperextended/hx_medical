@@ -1,13 +1,11 @@
--- Outline:
--- Save persisting death/status data if configured
--- Networked Revival
--- Try to fix invisible dead players upon arrival as seen in other scripts
 local Medical = {}
 
 -- TODO: REPLACE UNSECURE EVENT WITH SERVER-SIDE LOGIC
 RegisterNetEvent('medical:changeStatus', function(status, value, changeType)
     local player = Ox.GetPlayer(source)
+
     if player == nil then return end
+
     if changeType == 'add' then
         player.addStatus(status, value)
     elseif changeType == 'remove' then
@@ -55,17 +53,31 @@ end)
 
 AddEventHandler('ox:playerLoaded', function(source, userId, charId)
     local player = Ox.GetPlayer(source)
+    local playerState = player.getState()
+
+    repeat Wait(100) until player.get('isDead') ~= nil
+
+    print(player.get('isDead'), playerState.dead)
+
+    playerState.dead = false
+
+    if player.get('isDead') == 1 then
+        playerState.dead = true
+        return
+    end
 end)
 
 RegisterNetEvent('medical:playerDeath', function(state)
     local player = Ox.GetPlayer(source)
-
     if player and player.charId then
+        player.set('isDead', state, true)
         player.setStatus('unconscious', 0)
         player.setStatus('bleed', 0)
         player.setStatus('stagger', 0)
+
         if player.getStatus('hunger') > 50 and GetConvar('medical:resetHunger') then player.setStatus('hunger', 50) end
         if player.getStatus('thirst') > 50 and GetConvar('medical:resetThirst') then player.setStatus('thirst', 50) end
+
         TriggerClientEvent('medical:playerDeath', source)
     end
 end)
@@ -73,8 +85,8 @@ end)
 ---@param target? number
 Medical.revive = function(target)
     local player = Ox.GetPlayer(target)
-
     if not player then return end
+    player.set('isDead', false, true)
     player.setStatus('unconscious', 0)
     player.setStatus('bleed', 0)
     player.setStatus('stagger', 0)

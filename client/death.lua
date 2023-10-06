@@ -1,6 +1,6 @@
 local canRespawn = false
 local RespawnTimer = 0
-local controls = { 30, 31, 32, 33, 34, 35, 36 }
+local controls = { 25, 30, 31, 32, 33, 34, 35, 36, 140, 141, 142, 143, }
 local anims = {
     { 'missfinale_c1@',             'lying_dead_player0' },
     { 'veh@low@front_ps@idle_duck', 'sit' },
@@ -14,13 +14,15 @@ local function dropInventory()
     if GetConvarInt('medical:dropInventory', 0) == 1 then
         -- TODO:dump inventory at location
         lib.callback.await('medical:dropInventory', source, GetEntityCoords(cache.ped))
-        print('it worked!')
         -- print(json.encode(playerItems, { indent = true }))
     end
 end
 
 RegisterNetEvent('medical:revive', function()
     PlayerIsDead = false
+    LocalPlayer.state.dead = false
+
+
     TriggerServerEvent('ox:playerDeath', false)
     TriggerEvent('medical:clearBlurEffect')
     Wait(30)
@@ -121,12 +123,9 @@ local function checkForRespawn()
                 })
             then
                 lib.hideTextUI()
-                print('medical:useBeds', GetConvarInt('medical:useBeds', 1), type(GetConvarInt('medical:useBeds', 1)))
                 if GetConvarInt('medical:useBeds', 1) == 1 then
-                    print('hospitalBed')
                     Hospital:hospitalBed()
                 else
-                    print('teleportHospital')
                     Hospital:teleportHospital()
                 end
                 TriggerServerEvent('medical:revive')
@@ -190,9 +189,10 @@ local function startDeathLoop()
     CreateThread(function()
         while PlayerIsLoaded do
             Wait(100)
-            cache.ped = PlayerPedId()
-            if not PlayerIsDead and IsPedDeadOrDying(cache.ped, true) then
+            -- cache.ped = PlayerPedId()
+            if not PlayerIsDead and IsPedDeadOrDying(cache.ped, true) or not PlayerIsDead and LocalPlayer.state.dead then
                 PlayerIsDead = true
+                LocalPlayer.state.dead = true
                 TriggerServerEvent('ox:playerDeath', true)
                 TriggerServerEvent('medical:playerDeath', true)
             end
@@ -201,19 +201,17 @@ local function startDeathLoop()
 end
 
 AddEventHandler('ox:playerLoaded', function(data)
+    PlayerIsLoaded = false
+    SetEntityMaxHealth(cache.ped, 200)
+    SetEntityHealth(cache.ped, 200)
+    SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
+    PlayerIsLoaded = true
     startDeathLoop()
 end)
 
--- Support resource restart
-AddEventHandler('onResourceStart', function(resourceName)
-    if resourceName == cache.resource and cache.ped then
-        PlayerIsLoaded = false
-        SetEntityMaxHealth(cache.ped, 200)
-        SetEntityHealth(cache.ped, 200)
-        SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
-        PlayerIsLoaded = true
-        startDeathLoop()
-    end
+AddEventHandler('ox:playerLogout', function()
+    LocalPlayer.state.dead = nil
+    lib.hideTextUI()
 end)
 
 RegisterNetEvent('medical:killPlayer', function()
@@ -221,6 +219,17 @@ RegisterNetEvent('medical:killPlayer', function()
 end)
 
 if GetConvarInt('medical:debug', 0) == 1 then
+    -- Support resource restart
+    AddEventHandler('onResourceStart', function(resourceName)
+        if resourceName == cache.resource and cache.ped then
+            PlayerIsLoaded = false
+            SetEntityMaxHealth(cache.ped, 200)
+            SetEntityHealth(cache.ped, 200)
+            SetPlayerHealthRechargeMultiplier(cache.playerId, 0.0)
+            PlayerIsLoaded = true
+            startDeathLoop()
+        end
+    end)
     local ShowStatus = false
     AddEventHandler('ox:statusTick', function(statuses)
         if ShowStatus then
@@ -235,3 +244,10 @@ if GetConvarInt('medical:debug', 0) == 1 then
         dropInventory()
     end)
 end
+
+CreateThread(function()
+    while true do
+        Wait(100)
+        print('LocalPlayer.state.dead', LocalPlayer.state.dead)
+    end
+end)
