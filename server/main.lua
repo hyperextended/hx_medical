@@ -65,24 +65,74 @@ RegisterNetEvent('medical:heal', function(amount, target)
     TriggerClientEvent('medical:heal', target or source, amount or 200)
 end)
 
-lib.addCommand('builtin.everyone', { 'heal' }, function(source, args)
+lib.addCommand('heal', {
+    help = 'Heal a player by a certain amount',
+    params = {
+        {
+            name = 'amount',
+            type = 'number',
+            help = 'The amount to heal',
+            optional = true,
+        },
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Target player\'s server id',
+            optional = true,
+        },
+    },
+}, function(source, args, raw)
     print(('healing %s for %s'):format(args.target, args.amount))
     TriggerClientEvent('medical:heal', args.target or source, args.amount or 100)
-end, { 'amount:?number', 'target:?number' })
+end)
 
-lib.addCommand('builtin.everyone', { 'revive' }, function(source, args)
+lib.addCommand('revive', {
+    help = 'Revive a certain player or self',
+    params = {
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Target player\'s server id',
+            optional = true,
+        },
+    },
+}, function(source, args, raw)
     TriggerEvent('medical:revive', args.target or source)
-end, { 'target:?number' })
+end)
 
-lib.addCommand('builtin.everyone', { 'kill' }, function(source, args)
+lib.addCommand('kill', {
+    help = 'Kill a certain player or self',
+    params = {
+        {
+            name = 'target',
+            type = 'playerId',
+            help = 'Target player\'s server id',
+            optional = true,
+        },
+    },
+}, function(source, args, raw)
     local player = Ox.GetPlayer(args.target or source)
     if not player then return end
     local playerState = player.getState()
     playerState:set('dead', true, true)
-end, { 'target:?number' })
+end)
 
-
-lib.addCommand('builtin.everyone', { 'setStatus' }, function(source, args)
+lib.addCommand('setStatus', {
+    help = 'Set a status to a certain value or 100',
+    params = {
+        {
+            name = 'status',
+            type = 'string',
+            help = 'Status name to set (bleed, unconscious, stagger, thirst, hunger)',
+        },
+        {
+            name = 'amount',
+            type = 'number',
+            help = 'The amount to set',
+            optional = true,
+        },
+    },
+}, function(source, args, raw)
     if args.status == nil then return end
     local statuses = { 'bleed', 'unconscious', 'stagger', 'thirst', 'hunger' }
     local player = Ox.GetPlayer(source)
@@ -91,4 +141,4 @@ lib.addCommand('builtin.everyone', { 'setStatus' }, function(source, args)
             player.setStatus(args.status, tonumber(args.amount) or 100)
         end
     end
-end, { 'status:string', 'amount:?number' })
+end)
