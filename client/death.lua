@@ -36,10 +36,10 @@ local function revive()
         SetEveryoneIgnorePlayer(cache.playerId, false)
         SetEntityInvincible(PlayerPedId(), false)
         SetPlayerInvincible(PlayerPedId(), false)
-        exports.scully_emotemenu:ToggleLimitation(false)
+        exports.scully_emotemenu:setLimitation(false)
         canRespawn = false
         SetPedCanRagdoll(cache.ped, true)
-        exports.scully_emotemenu:ResetExpression()
+        exports.scully_emotemenu:resetExpression()
     end
 
 end
@@ -145,7 +145,7 @@ local function setDead()
     end
     Wait(200)
     TriggerEvent('ox_inventory:disarm')
-    exports.scully_emotemenu:SetExpression('dead_1')
+    exports.scully_emotemenu:setExpression('dead_1')
     if lib.progressActive() then
         lib.cancelProgress()
     end
@@ -154,7 +154,7 @@ end
 local function death()
     initializeVariables()
     resetStatus()
-    exports.scully_emotemenu:ToggleLimitation(true)
+    exports.scully_emotemenu:setLimitation(true)
     SetPlayerInvincible(cache.playerId, true)
     LoadAnimations()
     waitForRagdoll()

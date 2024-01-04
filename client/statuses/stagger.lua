@@ -10,12 +10,12 @@ local function canTrip(ped)
 end
 
 local function stagger()
-    prevWalk = exports.scully_emotemenu:GetCurrentWalk()
+    prevWalk = exports.scully_emotemenu:getCurrentWalk()
     while PlayerIsStaggered do
-        local curWalk = exports.scully_emotemenu:GetCurrentWalk()
+        local curWalk = exports.scully_emotemenu:getCurrentWalk()
         local chance = math.random(100)
         if curWalk ~= walkAnim then
-            exports.scully_emotemenu:SetWalk(walkAnim)
+            exports.scully_emotemenu:setWalk(walkAnim)
         end
         SetPedMoveRateOverride(cache.ped, 100 - (intensity / 5))
         if canTrip(cache.ped) and chance > 95 then
@@ -27,7 +27,7 @@ local function stagger()
     if prevWalk ~= 'default' then
         exports.scully_emotemenu:SetWalk(prevWalk)
     else
-        exports.scully_emotemenu:ResetWalk()
+        exports.scully_emotemenu:resetWalk()
     end
     walkAnim = nil
 end
